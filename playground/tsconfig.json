@@ -3,7 +3,7 @@
   "compilerOptions": {
     "types": ["vite/client"],
     "paths": {
-      "vue-text-styler": ["../src"]
+      "generic-plugin": ["../src"]
     },
     "forceConsistentCasingInFileNames": true,
   },

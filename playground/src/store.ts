@@ -1,5 +1,5 @@
 import { type Store, defineStore } from 'pinia'
-import { createActions, createGetters, createState } from '../../src/plugin'
+import { createActions, createGetters, createState } from 'generic-plugin'
 
 interface Category {
   id: number

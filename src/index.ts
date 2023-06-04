@@ -1,3 +1,3 @@
-import { piniaGeneric } from './plugin'
+import { createActions, createGetters, createState, piniaGeneric } from './plugin'
 
-export { piniaGeneric }
+export { createActions, createGetters, createState, piniaGeneric }

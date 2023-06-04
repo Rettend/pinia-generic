@@ -2,8 +2,7 @@ import 'virtual:uno.css'
 
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
-
-import { piniaGeneric } from '../../src'
+import { piniaGeneric } from 'generic-plugin'
 import App from './App.vue'
 
 const pinia = createPinia()
