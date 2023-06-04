@@ -1,0 +1,16 @@
+.dark {
+  --uno: bg-dark-5 text-warmgray-2;
+}
+
+.dark::-webkit-scrollbar {
+  background-color: #202324;
+  color: #aba499;
+}
+
+.dark::-webkit-scrollbar-corner {
+  background-color: #181a1b;
+}
+
+.dark::-webkit-scrollbar-thumb {
+  background-color: #454a4d;
+}
