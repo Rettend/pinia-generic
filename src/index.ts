@@ -1,3 +1,3 @@
-import { PiniaGeneric } from './plugin'
+import { piniaGeneric } from './plugin'
 
-export { PiniaGeneric }
+export { piniaGeneric }
