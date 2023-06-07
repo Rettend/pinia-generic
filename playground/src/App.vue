@@ -2,6 +2,7 @@
 import { useCategoryStore } from './store'
 
 const category = useCategoryStore()
+console.log(category.all)
 </script>
 
 <template>
@@ -13,7 +14,7 @@ const category = useCategoryStore()
       +
     </div>
     <div
-      v-for="item in category.all"
+      v-for="item in category.all.value"
       :key="item.id"
       flex items-center justify-center w-32 h-32 text-4xl font-bold text-white bg-blue-500 rounded-full cursor-pointer
       @click="category.remove(item.id)"
