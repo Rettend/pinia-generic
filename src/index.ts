@@ -1,3 +1,3 @@
-import { createActions, createGetters, createState, piniaGeneric } from './plugin'
+import { createActions, createGetters, createState, defineGenericStore, piniaGeneric } from './plugin'
 
-export { createActions, createGetters, createState, piniaGeneric }
+export { createActions, createGetters, createState, defineGenericStore, piniaGeneric }

@@ -6,9 +6,12 @@ export type PiniaStateTree = StateTree
 export type PiniaGetterTree = Record<string, (...args: any) => any>
 export type PiniaActionTree = Record<string, (...args: any) => any>
 
+export type PiniaGetterThis<TStore extends Store> = Record<string, (this: TStore) => any>
+export type PiniaActionThis<TStore extends Store> = Record<string, (this: TStore, ...args: any[]) => any>
+
 export type PickState<TStore extends Store> = TStore extends Store<string, infer TState, PiniaGetterTree, PiniaActionTree> ? TState : PiniaStateTree
-export type PickActions<TStore extends Store> = TStore extends Store<string, PiniaStateTree, PiniaGetterTree, infer TActions> ? TActions : never
 export type PickGetters<TStore extends Store> = TStore extends Store<string, PiniaStateTree, infer TGetters, PiniaActionTree> ? TGetters : never
+export type PickActions<TStore extends Store> = TStore extends Store<string, PiniaStateTree, PiniaGetterTree, infer TActions> ? TActions : never
 
 type CompatiblePiniaState<TState> = () => TState
 

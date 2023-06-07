@@ -1,21 +1,44 @@
 {
   "compilerOptions": {
-    "target": "es2017",
-    "module": "esnext",
-    "lib": ["esnext"],
-    "moduleResolution": "node",
+    "allowSyntheticDefaultImports": true,
+    "allowUnreachableCode": false,
+    "allowUnusedLabels": false,
+    "declaration": false,
+    "declarationMap": false,
     "esModuleInterop": true,
-    "strict": true,
-    "strictNullChecks": true,
+    "exactOptionalPropertyTypes": true,
+    "forceConsistentCasingInFileNames": true,
+    "moduleResolution": "node",
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitOverride": true,
+    "noImplicitReturns": true,
+    "noPropertyAccessFromIndexSignature": false,
+    "noUncheckedIndexedAccess": true,
+    "noUnusedLocals": false,
+    "noUnusedParameters": true,
+    "pretty": true,
     "resolveJsonModule": true,
     "skipLibCheck": true,
-    "skipDefaultLibCheck": true,
-    "forceConsistentCasingInFileNames": true,
+    "sourceMap": true,
+    "strict": true,
+    "useDefineForClassFields": true,
+    "useUnknownInCatchVariables": true,
+    "verbatimModuleSyntax": true,
+    "module": "esnext",
+    "target": "esnext",
+    "types": [
+      "node"
+    ],
+    "lib": [
+      "esnext"
+    ]
   },
   "include": [
-    "./src/**/*.ts", "./test/**/*.ts"
+    "./src/**/*.ts",
+    "./test/**/*.ts"
   ],
   "exclude": [
-    "node_modules", "dist"
+    "node_modules",
+    "dist"
   ]
 }

@@ -3,6 +3,6 @@
     "@antfu"
   ],
   "rules": {
-    "antfu/generic-spacing": "off"
+    "antfu/generic-spacing": "off" // this is broken
   }
 }
