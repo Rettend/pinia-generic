@@ -1,6 +1,5 @@
 import { type Store } from 'pinia'
-import { type PiniaStore, createActions, createGetters, defineGenericStore, useStore } from 'generic-plugin'
-import { type Ref, ref } from 'vue'
+import { type PiniaStore, createActions, createGetters, createState, defineGenericStore, useStore } from 'generic-plugin'
 
 interface Category {
   id: number
@@ -83,7 +82,9 @@ interface Category {
 type CategoryStore = PiniaStore<
   BaseStore<Category>,
   'category',
-  {},
+  {
+    some: string
+  },
   {
     getMaxId(): number
   },
@@ -92,15 +93,19 @@ type CategoryStore = PiniaStore<
   }
 >
 
-const getters = createGetters<CategoryStore>({
+const state = createState<BaseStore<Category>, CategoryStore>({
+  some: '12',
+})
+
+const getters = createGetters<BaseStore<Category>, CategoryStore>({
   getMaxId() {
-    return this.all.value.reduce((max, item) => Math.max(max, item.id), 0)
+    return this.all.reduce((max, item) => Math.max(max, item.id), 0)
   },
 })
 
-const actions = createActions<CategoryStore>({
+const actions = createActions<BaseStore<Category>, CategoryStore>({
   remove(id: number) {
-    this.all.value = this.all.value.filter(item => item.id !== id)
+    this.all = this.all.filter(item => item.id !== id)
   },
 })
 
@@ -108,27 +113,26 @@ type BaseStore<T> = Store<
   'base',
   {
     current: T | null
-    all: Ref<T[]>
+    all: T[]
   },
   {
     getLength(): number
-    getName(): string | null
+    getName(): string | undefined
   },
   {
     add(item: T): void
   }
 >
 
-function baseStore <T extends Category>() {
+function baseStore<T extends Category>() {
   return defineGenericStore<BaseStore<T>>({
-    state: () => ({
+    state: {
       current: null,
-      // all: [] as T[],
-      all: ref<T[]>([]) as Ref<T[]>,
-    }),
+      all: [],
+    },
     getters: {
       getLength() {
-        return this.all.value.length
+        return this.all.length
       },
       getName() {
         return this.current?.name
@@ -136,16 +140,17 @@ function baseStore <T extends Category>() {
     },
     actions: {
       add(item: T) {
-        this.all.value.push(item)
+        this.all.push(item)
       },
     },
   })
 }
 
-export const useCategoryStore = useStore<CategoryStore, BaseStore<Category>>(
+export const useCategoryStore = useStore<BaseStore<Category>, CategoryStore>(
   'category',
   baseStore<Category>(),
   {
+    state,
     getters,
     actions,
   },
