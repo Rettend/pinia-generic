@@ -1,1 +1,1 @@
-# pinia-plugin-generic
+# pinia-generic
