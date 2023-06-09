@@ -5,7 +5,7 @@
     "paths": {
       "pinia-generic": ["../src"]
     },
-    "forceConsistentCasingInFileNames": true,
+    "forceConsistentCasingInFileNames": true
   },
   "include": ["./**/*", "../uno.config.ts"]
 }
