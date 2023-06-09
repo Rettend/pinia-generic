@@ -165,3 +165,5 @@ export const useCategoryStore = useStore<CategoryStore, BaseStore<Category>>(
 //     actions,
 //   },
 // )
+
+// TODO: support options (persistedstate, etc.)

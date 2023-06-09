@@ -44,13 +44,9 @@
   },
   "devDependencies": {
     "@antfu/eslint-config": "^0.38.6",
-    "@iconify-json/ph": "^1.1.5",
     "@types/node": "^20.1.4",
-    "@vitejs/vue": "^4.2.3",
     "@vitest/coverage-istanbul": "^0.31.1",
     "@vitest/ui": "^0.31.1",
-    "@vue/test-utils": "^2.3.2",
-    "@vueuse/core": "^10.1.2",
     "bumpp": "^9.1.0",
     "eslint": "^8.40.0",
     "jsdom": "^22.1.0",
