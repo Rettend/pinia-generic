@@ -1,18 +1,19 @@
 {
-  "name": "pinia-plugin-generic",
+  "name": "pinia-generic",
   "version": "0.0.0",
   "description": "",
   "packageManager": "pnpm@8.5.1",
   "author": "Rettend",
   "license": "MIT",
-  "homepage": "https://github.com/Rettend/pinia-plugin-generic#readme",
+  "homepage": "https://github.com/Rettend/pinia-generic#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Rettend/pinia-plugin-generic.git"
+    "url": "git+https://github.com/Rettend/pinia-generic.git"
   },
-  "bugs": "https://github.com/Rettend/pinia-plugin-generic/issues",
+  "bugs": "https://github.com/Rettend/pinia-generic/issues",
   "keywords": [
     "pinia",
+    "generic",
     "vue",
     "pinia plugin"
   ],
@@ -45,7 +46,7 @@
     "@antfu/eslint-config": "^0.38.6",
     "@iconify-json/ph": "^1.1.5",
     "@types/node": "^20.1.4",
-    "@vitejs/plugin-vue": "^4.2.3",
+    "@vitejs/vue": "^4.2.3",
     "@vitest/coverage-istanbul": "^0.31.1",
     "@vitest/ui": "^0.31.1",
     "@vue/test-utils": "^2.3.2",

@@ -21,7 +21,7 @@ export type ExtractStoreType<TStore extends Store> = TStore extends Store<string
   ? { state: S; getters: G; actions: A }
   : never
 
-export interface StoreAll<TStore extends Store> {
+export interface StoreThis<TStore extends Store> {
   state?: {
     [K in keyof ExtractStoreType<TStore>['state']]: ExtractStoreType<TStore>['state'][K]
   }
@@ -41,11 +41,7 @@ export interface StoreAllThis<TStore extends Store, TGenericStore extends Store 
 }
 
 export type PiniaStore<
-  TGenericStore extends Store,
-  Id extends string,
-  State extends PiniaStateTree = {},
-  Getters extends PiniaGettersTree = {},
-  Actions extends PiniaActionsTree = {},
+  TGenericStore extends Store, Id extends string, State extends PiniaStateTree = {}, Getters extends PiniaGettersTree = {}, Actions extends PiniaActionsTree = {},
 > = Store<
   Id,
   State & ExtractStoreType<TGenericStore>['state'],

@@ -1,5 +1,5 @@
 import { type Store } from 'pinia'
-import { type PiniaStore, createActions, createGetters, createState, defineGenericStore, useStore } from 'generic-plugin'
+import { type PiniaStore, createActions, createGetters, createState, defineGenericStore, useStore } from 'pinia-generic'
 
 interface Category {
   id: number
@@ -93,17 +93,17 @@ type CategoryStore = PiniaStore<
   }
 >
 
-const state = createState<BaseStore<Category>, CategoryStore>({
+const state = createState<CategoryStore, BaseStore<Category>>({
   some: '12',
 })
 
-const getters = createGetters<BaseStore<Category>, CategoryStore>({
+const getters = createGetters<CategoryStore, BaseStore<Category>>({
   getMaxId() {
     return this.all.reduce((max, item) => Math.max(max, item.id), 0)
   },
 })
 
-const actions = createActions<BaseStore<Category>, CategoryStore>({
+const actions = createActions<CategoryStore, BaseStore<Category>>({
   remove(id: number) {
     this.all = this.all.filter(item => item.id !== id)
   },
@@ -146,12 +146,22 @@ function baseStore<T extends Category>() {
   })
 }
 
-export const useCategoryStore = useStore<BaseStore<Category>, CategoryStore>(
+export const useCategoryStore = useStore<CategoryStore, BaseStore<Category>>(
   'category',
-  baseStore<Category>(),
   {
     state,
     getters,
     actions,
   },
+  baseStore<Category>(),
 )
+
+// TODO?: without generics, just separate a store into state, getters, actions
+// export const useCategoryStore = useStore<CategoryStore>(
+//   'category',
+//   {
+//     state,
+//     getters,
+//     actions,
+//   },
+// )

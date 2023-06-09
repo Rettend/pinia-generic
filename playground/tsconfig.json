@@ -3,7 +3,7 @@
   "compilerOptions": {
     "types": ["vite/client"],
     "paths": {
-      "generic-plugin": ["../src"]
+      "pinia-generic": ["../src"]
     },
     "forceConsistentCasingInFileNames": true,
   },

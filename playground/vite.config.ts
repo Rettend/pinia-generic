@@ -10,7 +10,7 @@ export default defineConfig({
   ],
   resolve: {
     alias: {
-      'generic-plugin': path.resolve(__dirname, '../src'),
+      'pinia-generic': path.resolve(__dirname, '../src'),
     },
   },
 })
