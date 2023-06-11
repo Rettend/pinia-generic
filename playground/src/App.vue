@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { useCategoryStore } from './store'
+import { useBookStore, useCategoryStore } from './store'
 
 const category = useCategoryStore()
+const book = useBookStore()
 </script>
 
 <template>

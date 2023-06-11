@@ -128,14 +128,14 @@ export const useCategoryStore = useStore<CategoryStore, BaseStore<Category>>(
 
 // TODO: support options (persistedstate, etc.)
 
-interface Product {
+interface Book {
   id: number
   name: string
   price: number
 }
 
-type BaseStore1<T> = PiniaStore<
-  'base1',
+type ProductStore<T> = PiniaStore<
+  'product',
   {
     all: T[]
   },
@@ -148,12 +148,10 @@ type BaseStore1<T> = PiniaStore<
   }
 >
 
-function baseStore1<T extends Product>() {
-  return defineGenericStore<BaseStore1<T>>({
+function productStore<T extends Book>() {
+  return defineGenericStore<ProductStore<T>>({
     state: {
-      all: [
-        { id: 1, name: 'Laptop', price: 1000 } as T,
-      ],
+      all: [],
     },
     getters: {
       getTotal() {
@@ -170,3 +168,39 @@ function baseStore1<T extends Product>() {
     },
   })
 }
+
+type BookStore = PiniaStore<
+  'book',
+  {
+    active: Book | null
+  },
+  {
+    getAveragePrice(): number
+  },
+  {},
+  ProductStore<Book>
+>
+
+const bookState = createState<BookStore, ProductStore<Book>>({
+  active: null,
+  all: [
+    { id: 1, name: 'The Lord of the Rings', price: 20 },
+    { id: 2, name: 'The Hitchhiker\'s Guide to the Galaxy', price: 42 },
+    { id: 3, name: 'The Little Prince', price: 10 },
+  ],
+})
+
+const bookGetters = createGetters<BookStore, ProductStore<Book>>({
+  getAveragePrice() {
+    return this.getTotal / this.all.length
+  },
+})
+
+export const useBookStore = useStore<BookStore, ProductStore<Book>>(
+  'book',
+  {
+    state: bookState,
+    getters: bookGetters,
+  },
+  productStore<Book>(),
+)
