@@ -4,5 +4,9 @@
   ],
   "rules": {
     "no-console": "warn"
-  }
+  },
+  "ignorePatterns": [
+    "coverage",
+    "**/cache"
+  ]
 }
