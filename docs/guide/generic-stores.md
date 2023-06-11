@@ -210,7 +210,7 @@ function baseStore<T extends Category | Todo>() { // [!code ++]
 
 The generic store's properties are passed as optionals when defining the store. This means that we can override them.
 
-This is useful when you want to add a default value to the generic store's state.
+This allows you to add a default value to the generic store's state.
 
 ```ts
 export const useTodoStore = useStore<TodoStore, BaseStore<Todo>>(
