@@ -11,7 +11,7 @@ import type { ExtractStore, PiniaActionThis, PiniaGetterThis, StoreThis } from '
 export function createState<
   TStore extends Store, TGenericStore extends Store = Store,
 >(
-  state: Omit<ExtractStore<TStore>['state'], keyof ExtractStore<TGenericStore>['state']>,
+  state: Omit<ExtractStore<TStore>['state'], keyof ExtractStore<TGenericStore>['state']> & Partial<ExtractStore<TGenericStore>['state']>,
 ): ExtractStore<TStore>['state'] {
   return state
 }
@@ -66,6 +66,34 @@ export function defineGenericStore<
 }
 // #endregion defineGenericStore
 
+function filterUndefined<T extends Record<string, any>>(obj: T, undefinedProps: Set<string>): T {
+  const result = Object.keys (obj).reduce ((result, key) => {
+    const value = obj[key]
+    if (value !== undefined) {
+      if (typeof value === 'object' && value !== obj && value !== null) {
+        for (const subKey of Object.keys(value)) {
+          if (value[subKey] === undefined)
+            undefinedProps.add (subKey)
+          else
+            result[key as keyof T] = value
+        }
+      }
+    }
+    return result
+  }, {} as T)
+
+  for (const prop of undefinedProps) {
+    for (const key of Object.keys(result)) {
+      for (const subKey of Object.keys(result[key])) {
+        if (subKey === prop)
+          delete result[key][subKey]
+      }
+    }
+  }
+
+  return result
+}
+
 // #region useStore
 /**
  * Defines a store. Can extend a generic store.
@@ -82,6 +110,11 @@ export function useStore<
   store: StoreThis<TStore, TGenericStore>,
   genericStore: StoreThis<TGenericStore> = {},
 ) {
+  const undefinedProps = new Set<string>()
+
+  store = filterUndefined(store, undefinedProps)
+  genericStore = filterUndefined(genericStore, undefinedProps)
+
   return defineStore(id, {
     state: () => ({
       ...genericStore.state,

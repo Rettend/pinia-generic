@@ -1,8 +1,7 @@
 <script setup lang="ts">
-import { useCategoryStore, useTodoStore } from './store'
+import { useCategoryStore } from './store'
 
 const category = useCategoryStore()
-const todo = useTodoStore()
 </script>
 
 <template>

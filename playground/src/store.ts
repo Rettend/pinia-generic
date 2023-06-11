@@ -21,12 +21,16 @@ type CategoryStore = PiniaStore<
 
 const state = createState<CategoryStore, BaseStore<Category>>({
   description: 'This is a category store',
+  all: [
+    { id: 1, name: 'Laptops' },
+  ],
 })
 
 const getters = createGetters<CategoryStore, BaseStore<Category>>({
   getMaxId() {
     return this.all.reduce((max, item) => Math.max(max, item.id), 0)
   },
+  getLength: undefined,
 })
 
 const actions = createActions<CategoryStore, BaseStore<Category>>({
@@ -44,7 +48,6 @@ type BaseStore<T> = PiniaStore<
   {
     getLength(): number
     getName(): string | undefined
-    isDone(): boolean | undefined
   },
   {
     add(item: T): void
@@ -79,24 +82,20 @@ type BaseStore<T> = PiniaStore<
 
 // splitting the generic store too
 
-function baseState<T>() {
+function baseState<T extends Category>() {
   return createState<BaseStore<T>>({
     current: null,
     all: [],
   })
 }
 
-function baseGetters<T extends Category | Todo>() {
+function baseGetters<T extends Category>() {
   return createGetters<BaseStore<T>>({
     getLength() {
       return this.all.length
     },
     getName() {
       return this.current?.name
-    },
-    isDone() {
-      if (this.current && 'done' in this.current)
-        return this.current?.done
     },
   })
 }
@@ -109,7 +108,7 @@ function baseActions<T>() {
   })
 }
 
-function baseStore<T extends Category | Todo>() {
+function baseStore<T extends Category>() {
   return defineGenericStore<BaseStore<T>>({
     state: baseState<T>(),
     getters: baseGetters<T>(),
@@ -129,30 +128,45 @@ export const useCategoryStore = useStore<CategoryStore, BaseStore<Category>>(
 
 // TODO: support options (persistedstate, etc.)
 
-interface Todo {
+interface Product {
   id: number
   name: string
-  done: boolean
+  price: number
 }
 
-type TodoStore = PiniaStore<
-  'todo',
-  {},
-  {},
+type BaseStore1<T> = PiniaStore<
+  'base1',
   {
-    remove(id: number): void
+    all: T[]
   },
-  BaseStore<Todo>
+  {
+    getTotal(): number
+    getMaxPrice(): number
+  },
+  {
+    add(item: T): void
+  }
 >
 
-export const useTodoStore = useStore<TodoStore, BaseStore<Todo>>(
-  'todo',
-  {
-    actions: {
-      remove(id: number) {
-        this.all = this.all.filter(item => item.id !== id)
+function baseStore1<T extends Product>() {
+  return defineGenericStore<BaseStore1<T>>({
+    state: {
+      all: [
+        { id: 1, name: 'Laptop', price: 1000 } as T,
+      ],
+    },
+    getters: {
+      getTotal() {
+        return this.all.reduce((total, item) => total + item.price, 0)
+      },
+      getMaxPrice() {
+        return this.all.reduce((max, item) => Math.max(max, item.price), 0)
       },
     },
-  },
-  baseStore<Todo>(),
-)
+    actions: {
+      add(item: T) {
+        this.all.push(item)
+      },
+    },
+  })
+}

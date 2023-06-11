@@ -206,6 +206,50 @@ function baseStore<T extends Category | Todo>() { // [!code ++]
 }
 ```
 
+## Overriding the generic store
+
+The generic store's properties are passed as optionals when defining the store. This means that we can override them.
+
+This is useful when you want to add a default value to the generic store's state.
+
+```ts
+export const useTodoStore = useStore<TodoStore, BaseStore<Todo>>(
+  'todo',
+  {
+    state: { // [!code ++]
+      all: [ // [!code ++]
+        { id: 1, name: 'First Todo', done: false }, // [!code ++]
+      ], // [!code ++]
+    }, // [!code ++]
+    actions: {
+      remove(id: number) {
+        this.all = this.all.filter(item => item.id !== id)
+      },
+    },
+  },
+  baseStore<Todo>(),
+)
+```
+
+Or when you want to disable a getter or action.
+
+```ts
+export const useTodoStore = useStore<TodoStore, BaseStore<Todo>>(
+  'todo',
+  {
+    getters: { // [!code ++]
+      getName: undefined, // getName no longer shows up in the store // [!code ++]
+    }, // [!code ++]
+    actions: {
+      remove(id: number) {
+        this.all = this.all.filter(item => item.id !== id)
+      },
+    },
+  },
+  baseStore<Todo>(),
+)
+```
+
 That's it!
 
 The generic store can also be split up. See an example here: [Generic Examples](/examples/generic).

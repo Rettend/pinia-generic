@@ -13,6 +13,9 @@ type PiniaActionsTree = Record<string | number | symbol, (...args: any[]) => any
 export type PiniaGetterThis<TStore extends Store, TGenericStore extends Store = TStore> = {
   [K in keyof Omit<ExtractStore<TStore>['getters'], keyof ExtractStore<TGenericStore>['getters']>]:
   (this: TStore) => ReturnType<ExtractStore<TStore>['getters'][K]>
+} & {
+  [K in keyof Partial<ExtractStore<TGenericStore>['getters']>]:
+  ((this: TStore) => ReturnType<ExtractStore<TGenericStore>['getters'][K]>) | undefined
 }
 // #endregion PiniaGetterThis
 
@@ -24,9 +27,9 @@ export type PiniaGetterThis<TStore extends Store, TGenericStore extends Store = 
  */
 export type PiniaActionThis<TStore extends Store, TGenericStore extends Store = TStore> = {
   [K in keyof Omit<ExtractStore<TStore>['actions'], keyof ExtractStore<TGenericStore>['actions']>]:
-  (this: TStore, ...args: Parameters<ExtractStore<TStore>['actions'][K]>)
-  => ReturnType<ExtractStore<TStore>['actions'][K]>
-}
+  ((this: TStore, ...args: Parameters<ExtractStore<TStore>['actions'][K]>)
+  => ReturnType<ExtractStore<TStore>['actions'][K]>) | undefined
+} & Partial<ExtractStore<TGenericStore>['actions']>
 // #endregion PiniaActionThis
 
 // #region StoreThis
@@ -36,7 +39,7 @@ export type PiniaActionThis<TStore extends Store, TGenericStore extends Store = 
  * @internal
  */
 export interface StoreThis<TStore extends Store, TGenericStore extends Store = Store> {
-  state?: Omit<ExtractStore<TStore>['state'], keyof ExtractStore<TGenericStore>['state']>
+  state?: Omit<ExtractStore<TStore>['state'], keyof ExtractStore<TGenericStore>['state']> & Partial<ExtractStore<TGenericStore>['state']>
   getters?: PiniaGetterThis<TStore, TGenericStore>
   actions?: PiniaActionThis<TStore, TGenericStore>
 }
