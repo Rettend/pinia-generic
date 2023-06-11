@@ -9,8 +9,8 @@ I skipped the imports for brevity.
 [Store type](/guide/generic-stores#simple-generic-store)
 
 ```ts
-type BaseStore<T> = PiniaStore<
-  'base',
+type ProductStore<T> = PiniaStore<
+  'product',
   {
     all: T[]
   },
@@ -82,6 +82,11 @@ Creating the state and getters
 ```ts
 const bookState = createState<BookStore, ProductStore<Book>>({
   active: null,
+  all: [
+    { id: 1, name: 'The Lord of the Rings', price: 20 },
+    { id: 2, name: 'The Hitchhiker\'s Guide to the Galaxy', price: 42 },
+    { id: 3, name: 'The Little Prince', price: 10 },
+  ],
 })
 
 const bookGetters = createGetters<BookStore, ProductStore<Book>>({
