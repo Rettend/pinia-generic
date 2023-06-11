@@ -2,6 +2,7 @@ import { defineConfig } from 'vitepress'
 
 export default defineConfig({
   title: 'Pinia Generic',
+  base: '/pinia-generic/',
   description: 'Create generic stores, and split stores into multiple files',
   head: [
     ['link', { rel: 'icon', href: '/pinia-generic.svg' }],
