@@ -1,50 +1,79 @@
 import type { StateTree, Store } from 'pinia'
 
-export type PiniaStateTree = StateTree
-export type PiniaGettersTree = Record<string | number | symbol, () => any>
-export type PiniaActionsTree = Record<string | number | symbol, (...args: any[]) => any>
+type PiniaStateTree = StateTree
+type PiniaGettersTree = Record<string | number | symbol, () => any>
+type PiniaActionsTree = Record<string | number | symbol, (...args: any[]) => any>
 
-export type PiniaGetterThis<TStore extends Store> = Record<string | number | symbol, (this: TStore) => any>
-export type PiniaActionThis<TStore extends Store> = Record<string | number | symbol, (this: TStore, ...args: any[]) => any>
-
-export type PiniaGetterThisStore<TStore extends Store, TGenericStore extends Store = TStore> = {
-  [K in keyof Omit<ExtractStoreType<TStore>['getters'], keyof ExtractStoreType<TGenericStore>['getters']>]:
-  (this: TStore) => ReturnType<ExtractStoreType<TStore>['getters'][K]>
+// #region PiniaGetterThis
+/**
+ * Getters with `this` context of the store and the generic store combined.
+ * Puts all of the properties into `this`, while it only requires the getters unique to the store to be defined.
+ * @internal
+ */
+export type PiniaGetterThis<TStore extends Store, TGenericStore extends Store = TStore> = {
+  [K in keyof Omit<ExtractStore<TStore>['getters'], keyof ExtractStore<TGenericStore>['getters']>]:
+  (this: TStore) => ReturnType<ExtractStore<TStore>['getters'][K]>
 }
-export type PiniaActionThisStore<TStore extends Store, TGenericStore extends Store = TStore> = {
-  [K in keyof Omit<ExtractStoreType<TStore>['actions'], keyof ExtractStoreType<TGenericStore>['actions']>]:
-  (this: TStore, ...args: Parameters<ExtractStoreType<TStore>['actions'][K]>)
-  => ReturnType<ExtractStoreType<TStore>['actions'][K]>
-}
+// #endregion PiniaGetterThis
 
-export type ExtractStoreType<TStore extends Store> = TStore extends Store<string, infer S, infer G, infer A>
+// #region PiniaActionThis
+/**
+ * Actions with `this` context of the store and the generic store combined.
+ * Puts all of the properties into `this`, while it only requires the actions unique to the store to be defined.
+ * @internal
+ */
+export type PiniaActionThis<TStore extends Store, TGenericStore extends Store = TStore> = {
+  [K in keyof Omit<ExtractStore<TStore>['actions'], keyof ExtractStore<TGenericStore>['actions']>]:
+  (this: TStore, ...args: Parameters<ExtractStore<TStore>['actions'][K]>)
+  => ReturnType<ExtractStore<TStore>['actions'][K]>
+}
+// #endregion PiniaActionThis
+
+// #region StoreThis
+/**
+ * Store with `this` context of the store and the generic store combined.
+ * Puts all of the properties into `this`, while it only requires the ones unique to the store to be defined.
+ * @internal
+ */
+export interface StoreThis<TStore extends Store, TGenericStore extends Store = Store> {
+  state?: Omit<ExtractStore<TStore>['state'], keyof ExtractStore<TGenericStore>['state']>
+  getters?: PiniaGetterThis<TStore, TGenericStore>
+  actions?: PiniaActionThis<TStore, TGenericStore>
+}
+// #endregion StoreThis
+
+// #region ExtractStore
+/**
+ * Extracts the state, getters and actions from a store.
+ * @template TStore - The store type.
+ * @example
+ * Index this type to access the state, getters and actions of a store.
+ * ```ts
+ * type State = ExtractStore<Store>['state']
+ * ```
+ * @internal
+ */
+export type ExtractStore<TStore extends Store> = TStore extends Store<string, infer S, infer G, infer A>
   ? { state: S; getters: G; actions: A }
   : never
+// #endregion ExtractStore
 
-export interface StoreThis<TStore extends Store> {
-  state?: {
-    [K in keyof ExtractStoreType<TStore>['state']]: ExtractStoreType<TStore>['state'][K]
-  }
-  getters?: {
-    [K in keyof ExtractStoreType<TStore>['getters']]: (this: TStore) => ReturnType<ExtractStoreType<TStore>['getters'][K]>
-  }
-  actions?: {
-    [K in keyof ExtractStoreType<TStore>['actions']]: (this: TStore, ...args: Parameters<ExtractStoreType<TStore>['actions'][K]>)
-    => ReturnType<ExtractStoreType<TStore>['actions'][K]>
-  }
-}
-
-export interface StoreAllThis<TStore extends Store, TGenericStore extends Store = TStore> {
-  state?: PiniaStateTree
-  getters?: PiniaGetterThisStore<TStore, TGenericStore>
-  actions?: PiniaActionThisStore<TStore, TGenericStore>
-}
-
+// #region PiniaStore
+/**
+ * Define a type for a store or a generic store. Combines their properties.
+ * @template Id - The store ID.
+ * @template State - The store state.
+ * @template Getters - The store getters.
+ * @template Actions - The store actions.
+ * @template TGenericStore - The generic store type.
+ * @public
+ */
 export type PiniaStore<
-  TGenericStore extends Store, Id extends string, State extends PiniaStateTree = {}, Getters extends PiniaGettersTree = {}, Actions extends PiniaActionsTree = {},
+  Id extends string = string, State extends PiniaStateTree = {}, Getters extends PiniaGettersTree = {}, Actions extends PiniaActionsTree = {}, TGenericStore extends Store = Store,
 > = Store<
   Id,
-  State & ExtractStoreType<TGenericStore>['state'],
-  Getters & ExtractStoreType<TGenericStore>['getters'],
-  Actions & ExtractStoreType<TGenericStore>['actions']
+  State & ExtractStore<TGenericStore>['state'],
+  Getters & ExtractStore<TGenericStore>['getters'],
+  Actions & ExtractStore<TGenericStore>['actions']
 >
+// #endregion PiniaStore

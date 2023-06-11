@@ -1,4 +1,3 @@
-import { type Store } from 'pinia'
 import { type PiniaStore, createActions, createGetters, createState, defineGenericStore, useStore } from 'pinia-generic'
 
 interface Category {
@@ -6,95 +5,22 @@ interface Category {
   name: string
 }
 
-// export const useCategoryStore = defineStore({
-//   id: 'category',
-//   state: () => ({
-//     all: [] as Category[],
-//     current: undefined as Category | undefined,
-//   }),
-//   actions: {
-//     addEmpty(item: Category) {
-//       this.all.push(item)
-//     },
-//   },
-// })
-
-// type CategoryStore = Store<
-//   'category',
-//   {
-//     current: Category | null
-//     all: Category[]
-//   },
-//   {
-//     getLength(): number
-//     getName(): string | null
-//     getMaxId(): number
-//   },
-//   {
-//     add(item: Category): void
-//     remove(id: number): void
-//   }
-// >
-
-// const state = createState<CategoryStore>({
-//   current: null,
-//   all: [],
-// })
-
-// const getters = createGetters<CategoryStore>({
-//   getLength() {
-//     return this.all.length
-//   },
-//   getName() {
-//     return this.current?.name
-//   },
-//   getMaxId() {
-//     return this.all.reduce((max, item) => Math.max(max, item.id), 0)
-//   },
-// })
-
-// const actions = createActions<CategoryStore>({
-//   add(item: Category) {
-//     this.all.push(item)
-//   },
-//   remove(id: number) {
-//     this.all = this.all.filter(item => item.id !== id)
-//   },
-// })
-
-// export const useCategoryStore = defineStore('category', {
-//   state: () => state,
-//   getters,
-//   actions,
-// })
-
-// type CategoryStore = Store<
-//   'category',
-//   {},
-//   {
-//     getMaxId(): number
-//   },
-//   {
-//     remove(id: number): void
-//   }
-// >
-
 type CategoryStore = PiniaStore<
-  BaseStore<Category>,
   'category',
   {
-    some: string
+    description: string
   },
   {
     getMaxId(): number
   },
   {
     remove(id: number): void
-  }
+  },
+  BaseStore<Category>
 >
 
 const state = createState<CategoryStore, BaseStore<Category>>({
-  some: '12',
+  description: 'This is a category store',
 })
 
 const getters = createGetters<CategoryStore, BaseStore<Category>>({
@@ -109,7 +35,7 @@ const actions = createActions<CategoryStore, BaseStore<Category>>({
   },
 })
 
-type BaseStore<T> = Store<
+type BaseStore<T> = PiniaStore<
   'base',
   {
     current: T | null
@@ -118,31 +44,76 @@ type BaseStore<T> = Store<
   {
     getLength(): number
     getName(): string | undefined
+    isDone(): boolean | undefined
   },
   {
     add(item: T): void
   }
 >
 
-function baseStore<T extends Category>() {
+// function baseStore<T extends Category | Todo>() {
+//   return defineGenericStore<BaseStore<T>>({
+//     state: {
+//       current: null,
+//       all: [],
+//     },
+//     getters: {
+//       getLength() {
+//         return this.all.length
+//       },
+//       getName() {
+//         return this.current?.name
+//       },
+//       isDone() {
+//         if (this.current && 'done' in this.current)
+//           return this.current?.done
+//       },
+//     },
+//     actions: {
+//       add(item: T) {
+//         this.all.push(item)
+//       },
+//     },
+//   })
+// }
+
+// splitting the generic store too
+
+function baseState<T>() {
+  return createState<BaseStore<T>>({
+    current: null,
+    all: [],
+  })
+}
+
+function baseGetters<T extends Category | Todo>() {
+  return createGetters<BaseStore<T>>({
+    getLength() {
+      return this.all.length
+    },
+    getName() {
+      return this.current?.name
+    },
+    isDone() {
+      if (this.current && 'done' in this.current)
+        return this.current?.done
+    },
+  })
+}
+
+function baseActions<T>() {
+  return createActions<BaseStore<T>>({
+    add(item: T) {
+      this.all.push(item)
+    },
+  })
+}
+
+function baseStore<T extends Category | Todo>() {
   return defineGenericStore<BaseStore<T>>({
-    state: {
-      current: null,
-      all: [],
-    },
-    getters: {
-      getLength() {
-        return this.all.length
-      },
-      getName() {
-        return this.current?.name
-      },
-    },
-    actions: {
-      add(item: T) {
-        this.all.push(item)
-      },
-    },
+    state: baseState<T>(),
+    getters: baseGetters<T>(),
+    actions: baseActions<T>(),
   })
 }
 
@@ -156,14 +127,32 @@ export const useCategoryStore = useStore<CategoryStore, BaseStore<Category>>(
   baseStore<Category>(),
 )
 
-// TODO?: without generics, just separate a store into state, getters, actions
-// export const useCategoryStore = useStore<CategoryStore>(
-//   'category',
-//   {
-//     state,
-//     getters,
-//     actions,
-//   },
-// )
-
 // TODO: support options (persistedstate, etc.)
+
+interface Todo {
+  id: number
+  name: string
+  done: boolean
+}
+
+type TodoStore = PiniaStore<
+  'todo',
+  {},
+  {},
+  {
+    remove(id: number): void
+  },
+  BaseStore<Todo>
+>
+
+export const useTodoStore = useStore<TodoStore, BaseStore<Todo>>(
+  'todo',
+  {
+    actions: {
+      remove(id: number) {
+        this.all = this.all.filter(item => item.id !== id)
+      },
+    },
+  },
+  baseStore<Todo>(),
+)

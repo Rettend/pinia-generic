@@ -8,7 +8,6 @@ interface Category {
 }
 
 type CategoryStore = PiniaStore<
-  BaseStore<Category>,
   'category',
   {
     some: string
@@ -18,7 +17,8 @@ type CategoryStore = PiniaStore<
   },
   {
     remove(id: number): void
-  }
+  },
+  BaseStore<Category>
 >
 
 const state = createState<CategoryStore, BaseStore<Category>>({

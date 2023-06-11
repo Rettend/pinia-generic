@@ -1,30 +1,60 @@
 import { type Store, type StoreDefinition, defineStore } from 'pinia'
-import type { ExtractStoreType, PiniaActionThisStore, PiniaGetterThisStore, StoreAllThis, StoreThis } from './types'
+import type { ExtractStore, PiniaActionThis, PiniaGetterThis, StoreThis } from './types'
 
+// #region createState
+/**
+ * Creates a state object for a store.
+ * @template TStore - The store type.
+ * @template TGenericStore - The generic store type.
+ * @param state - The state object.
+ */
 export function createState<
-  TStore extends Store, TGenericStore extends Store,
+  TStore extends Store, TGenericStore extends Store = Store,
 >(
-  state: Omit<ExtractStoreType<TStore>['state'], keyof ExtractStoreType<TGenericStore>['state']>,
-): ExtractStoreType<TStore>['state'] {
+  state: Omit<ExtractStore<TStore>['state'], keyof ExtractStore<TGenericStore>['state']>,
+): ExtractStore<TStore>['state'] {
   return state
 }
+// #endregion createState
 
+// #region createGetters
+/**
+ * Creates a getters object for a store.
+ * @template TStore - The store type.
+ * @template TGenericStore - The generic store type.
+ * @param getters - The getters object.
+ */
 export function createGetters<
-  TStore extends Store, TGenericStore extends Store,
+  TStore extends Store, TGenericStore extends Store = Store,
 >(
-  getters: PiniaGetterThisStore<TStore, TGenericStore>,
-): ExtractStoreType<TStore>['getters'] {
+  getters: PiniaGetterThis<TStore, TGenericStore>,
+): ExtractStore<TStore>['getters'] {
   return getters
 }
+// #endregion createGetters
 
+// #region createActions
+/**
+ * Creates an actions object for a store.
+ * @template TStore - The store type.
+ * @template TGenericStore - The generic store type.
+ * @param actions - The actions object.
+ */
 export function createActions<
-  TStore extends Store, TGenericStore extends Store,
+  TStore extends Store, TGenericStore extends Store = Store,
 >(
-  actions: PiniaActionThisStore<TStore, TGenericStore>,
-): ExtractStoreType<TStore>['actions'] {
+  actions: PiniaActionThis<TStore, TGenericStore>,
+): ExtractStore<TStore>['actions'] {
   return actions
 }
+// #endregion createActions
 
+// #region defineGenericStore
+/**
+ * Defines a generic store.
+ * @template TStore - The store type.
+ * @param store - The store object.
+ */
 export function defineGenericStore<
   TStore extends Store,
 >(
@@ -34,12 +64,22 @@ export function defineGenericStore<
     ...store,
   }
 }
+// #endregion defineGenericStore
 
+// #region useStore
+/**
+ * Defines a store. Can extend a generic store.
+ * @template TStore - The store type.
+ * @template TGenericStore - The generic store type.
+ * @param id - The store id.
+ * @param store - The store object.
+ * @param genericStore - The generic store object.
+ */
 export function useStore<
-  TStore extends Store, TGenericStore extends Store = TStore,
+  TStore extends Store, TGenericStore extends Store = Store,
 >(
-  id: string,
-  store: StoreAllThis<TStore, TGenericStore>,
+  id: TStore['$id'],
+  store: StoreThis<TStore, TGenericStore>,
   genericStore: StoreThis<TGenericStore> = {},
 ) {
   return defineStore(id, {
@@ -57,8 +97,9 @@ export function useStore<
     },
   }) as StoreDefinition<
     TStore['$id'],
-    ExtractStoreType<TStore>['state'],
-    ExtractStoreType<TStore>['getters'],
-    ExtractStoreType<TStore>['actions']
+    ExtractStore<TStore>['state'],
+    ExtractStore<TStore>['getters'],
+    ExtractStore<TStore>['actions']
   >
 }
+// #endregion useStore
