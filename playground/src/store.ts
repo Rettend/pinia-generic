@@ -82,7 +82,7 @@ type BaseStore<T> = PiniaStore<
 
 // splitting the generic store too
 
-function baseState<T extends Category>() {
+function baseState<T>() {
   return createState<BaseStore<T>>({
     current: null,
     all: [],
@@ -134,49 +134,71 @@ interface Book {
   price: number
 }
 
+interface ProductState<T> {
+  all: T[]
+}
+
+interface ProductGetters {
+  getTotal(): number
+  getMaxPrice(): number
+}
+
+interface ProductActions<T> {
+  add(item: T): void
+}
+
 type ProductStore<T> = PiniaStore<
   'product',
-  {
-    all: T[]
-  },
-  {
-    getTotal(): number
-    getMaxPrice(): number
-  },
-  {
-    add(item: T): void
-  }
+  ProductState<T>,
+  ProductGetters,
+  ProductActions<T>
 >
 
-function productStore<T extends Book>() {
-  return defineGenericStore<ProductStore<T>>({
-    state: {
-      all: [],
+function productState<T>() {
+  return createState<ProductStore<T>>({
+    all: [],
+  })
+}
+
+function productGetters<T extends Book>() {
+  return createGetters<ProductStore<T>>({
+    getTotal() {
+      return this.all.reduce((total, item) => total + item.price, 0)
     },
-    getters: {
-      getTotal() {
-        return this.all.reduce((total, item) => total + item.price, 0)
-      },
-      getMaxPrice() {
-        return this.all.reduce((max, item) => Math.max(max, item.price), 0)
-      },
-    },
-    actions: {
-      add(item: T) {
-        this.all.push(item)
-      },
+    getMaxPrice() {
+      return this.all.reduce((max, item) => Math.max(max, item.price), 0)
     },
   })
 }
 
+function productActions<T>() {
+  return createActions<ProductStore<T>>({
+    add(item: T) {
+      this.all.push(item)
+    },
+  })
+}
+
+function productStore<T extends Book>() {
+  return defineGenericStore<ProductStore<T>>({
+    state: productState<T>(),
+    getters: productGetters<T>(),
+    actions: productActions<T>(),
+  })
+}
+
+interface BookState {
+  active: Book | null
+}
+
+interface BookGetters {
+  getAveragePrice(): number
+}
+
 type BookStore = PiniaStore<
   'book',
-  {
-    active: Book | null
-  },
-  {
-    getAveragePrice(): number
-  },
+  BookState,
+  BookGetters,
   {},
   ProductStore<Book>
 >

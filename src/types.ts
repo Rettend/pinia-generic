@@ -1,8 +1,5 @@
+/* eslint-disable antfu/generic-spacing */
 import type { StateTree, Store } from 'pinia'
-
-type PiniaStateTree = StateTree
-type PiniaGettersTree = Record<string | number | symbol, () => any>
-type PiniaActionsTree = Record<string | number | symbol, (...args: any[]) => any>
 
 // #region PiniaGetterThis
 /**
@@ -72,7 +69,11 @@ export type ExtractStore<TStore extends Store> = TStore extends Store<string, in
  * @public
  */
 export type PiniaStore<
-  Id extends string = string, State extends PiniaStateTree = {}, Getters extends PiniaGettersTree = {}, Actions extends PiniaActionsTree = {}, TGenericStore extends Store = Store,
+  Id extends string = string,
+  State extends StateTree = {},
+  Getters = {},
+  Actions = {},
+  TGenericStore extends Store = Store,
 > = Store<
   Id,
   State & ExtractStore<TGenericStore>['state'],
