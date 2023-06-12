@@ -26,8 +26,8 @@ export default defineConfig({
       {
         text: 'Examples',
         items: [
-          { text: 'Basic', link: '/examples/basic' },
-          { text: 'Generic', link: '/examples/generic' },
+          { text: 'Basic Inline/Split Store', link: '/examples/basic' },
+          { text: 'Advanced', link: '/examples/advanced' },
         ],
       },
       {

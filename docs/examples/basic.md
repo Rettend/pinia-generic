@@ -1,5 +1,7 @@
 # Basic Example
 
+Here I show a basic generic store and a store that extends it.
+
 ::: tip NOTE
 I skipped the imports for brevity.
 :::
@@ -8,9 +10,10 @@ I skipped the imports for brevity.
 
 [Store type](/guide/generic-stores#simple-generic-store)
 
-```ts
-type ProductStore<T> = PiniaStore<
-  'product',
+::: code-group
+
+```ts [inline]
+type ProductStore<T> = PiniaStore<'product',
   {
     all: T[]
   },
@@ -24,9 +27,34 @@ type ProductStore<T> = PiniaStore<
 >
 ```
 
+```ts [split]
+interface ProductState<T> {
+  all: T[]
+}
+
+interface ProductGetters {
+  getTotal(): number
+  getMaxPrice(): number
+}
+
+interface ProductActions<T> {
+  add(item: T): void
+}
+
+type ProductStore<T> = PiniaStore<'product',
+  ProductState<T>,
+  ProductGetters,
+  ProductActions<T>
+>
+```
+
+:::
+
 [Store function](/guide/generic-stores#definegenericstore-function)
 
-```ts
+::: code-group
+
+```ts [inline]
 function productStore<T extends Book>() {
   return defineGenericStore<ProductStore<T>>({
     state: {
@@ -49,6 +77,43 @@ function productStore<T extends Book>() {
 }
 ```
 
+```ts [split]
+function productState<T>() {
+  return createState<ProductStore<T>>({
+    all: [],
+  })
+}
+
+function productGetters<T extends Book>() {
+  return createGetters<ProductStore<T>>({
+    getTotal() {
+      return this.all.reduce((total, item) => total + item.price, 0)
+    },
+    getMaxPrice() {
+      return this.all.reduce((max, item) => Math.max(max, item.price), 0)
+    },
+  })
+}
+
+function productActions<T>() {
+  return createActions<ProductStore<T>>({
+    add(item: T) {
+      this.all.push(item)
+    },
+  })
+}
+
+function productStore<T extends Book>() {
+  return defineGenericStore<ProductStore<T>>({
+    state: productState<T>(),
+    getters: productGetters<T>(),
+    actions: productActions<T>(),
+  })
+}
+```
+
+:::
+
 ## Using the Generic Store
 
 Type that will go in the place of `T`.
@@ -63,9 +128,10 @@ interface Book {
 
 Store type
 
-```ts
-type BookStore = PiniaStore<
-  'book',
+::: code-group
+
+```ts [inline]
+type BookStore = PiniaStore<'book',
   {
     active: Book | null
   },
@@ -77,9 +143,50 @@ type BookStore = PiniaStore<
 >
 ```
 
-Creating the state and getters
+```ts [split]
+interface BookState {
+  active: Book | null
+}
 
-```ts
+interface BookGetters {
+  getAveragePrice(): number
+}
+
+type BookStore = PiniaStore<'book',
+  BookState,
+  BookGetters,
+  {},
+  ProductStore<Book>
+>
+```
+
+:::
+
+Creating the [store](/guide/generic-stores.html#usestore-function)
+
+::: code-group
+
+```ts [inline]
+export const useBookStore = useStore<BookStore, ProductStore<Book>>('book', {
+  state: {
+    active: null,
+    all: [
+      { id: 1, name: 'The Lord of the Rings', price: 20 },
+      { id: 2, name: 'The Hitchhiker\'s Guide to the Galaxy', price: 42 },
+      { id: 3, name: 'The Little Prince', price: 10 },
+    ],
+  },
+  getters: {
+    getAveragePrice() {
+      return this.getTotal / this.all.length
+    },
+  },
+},
+productStore<Book>(),
+)
+```
+
+```ts [split]
 const bookState = createState<BookStore, ProductStore<Book>>({
   active: null,
   all: [
@@ -94,21 +201,17 @@ const bookGetters = createGetters<BookStore, ProductStore<Book>>({
     return this.getTotal / this.all.length
   },
 })
-```
 
-Creating the store
-
-```ts
-export const useBookStore = useStore<BookStore, ProductStore<Book>>(
-  'book',
-  {
-    state: bookState,
-    getters: bookGetters,
-  },
-  productStore<Book>(),
+export const useBookStore = useStore<BookStore, ProductStore<Book>>('book', {
+  state: bookState,
+  getters: bookGetters,
+},
+productStore<Book>(),
 )
 ```
 
+:::
+
 ## Resulting Store
 
-![basic store](/public/basic-store.png)
+![basic store](/basic-store.png)

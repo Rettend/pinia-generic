@@ -46,6 +46,8 @@ function baseStore<T extends Category>() {
         return this.all.length
       },
       getName() {
+        // without the type constraint, this would throw an error:
+        // Property 'name' does not exist on type 'NonNullable<T>'.ts(2339)
         return this.current?.name
       },
     },
@@ -58,7 +60,7 @@ function baseStore<T extends Category>() {
 }
 ```
 
-## Extending the generic store
+## Using the generic store
 
 Now we have a type that's used throughout our project (this will go in the place of `T`).
 
@@ -68,6 +70,44 @@ interface Category {
   name: string
 }
 ```
+
+We define a store type that uses the generic store, and pass `Category` as the generic parameter.
+
+```ts
+type CategoryStore = PiniaStore<'category', {}, {}, {}, BaseStore<Category>>
+```
+
+### `useStore()` function
+
+The `useStore()` function is a wrapper around the `defineStore()` function, with the additional generic store parameter. It returns a store with the combined state, getters and actions.
+
+Here we add default values to the state defined in the generic store.
+
+```ts{12}
+export const useCategoryStore = useStore<CategoryStore, BaseStore<Category>>(
+  'category',
+  {
+    state: {
+      current: { id: 1, name: 'Laptops' },
+      all: [
+        { id: 1, name: 'Laptops' },
+        { id: 2, name: 'Phones' },
+      ],
+    },
+  },
+  baseStore<Category>(),
+)
+```
+
+::: tip NOTE
+You need to pass your store as the first generic parameter, **and the generic store as the second**, with the `T` type substituted.
+:::
+
+Result:
+
+![used store](/used-store.png)
+
+## Extending the generic store
 
 The store that extends the generic store adds some properties that are specific to the store.
 
@@ -85,10 +125,6 @@ type CategoryStore = PiniaStore<
 >
 ```
 
-### `useStore()` function
-
-The `useStore()` function is a wrapper around the `defineStore()` function, with the additional generic store parameter. It returns a store with the combined state, getters and actions.
-
 We can go ahead and use the `create` functions.
 
 ```ts
@@ -105,7 +141,7 @@ const getters = createGetters<CategoryStore, BaseStore<Category>>({
 
 And pass them to the `useStore()` function.
 
-```ts{7}
+```ts
 export const useCategoryStore = useStore<CategoryStore, BaseStore<Category>>(
   'category',
   {
@@ -115,10 +151,6 @@ export const useCategoryStore = useStore<CategoryStore, BaseStore<Category>>(
   baseStore<Category>(),
 )
 ```
-
-::: tip NOTE
-You need to pass your store as the first generic parameter, **and the generic store as the second**, with the `T` type substituted.
-:::
 
 We can also just define the store in one go, if you don't want to split it up.
 
@@ -231,7 +263,7 @@ export const useTodoStore = useStore<TodoStore, BaseStore<Todo>>(
 )
 ```
 
-Or when you want to disable a getter or action.
+Or to disable a getter or an action.
 
 ```ts
 export const useTodoStore = useStore<TodoStore, BaseStore<Todo>>(
@@ -252,4 +284,4 @@ export const useTodoStore = useStore<TodoStore, BaseStore<Todo>>(
 
 That's it!
 
-The generic store can also be split up. See an example here: [Generic Examples](/examples/generic).
+Every store - including the generic store - can be split up into state, getters and actions to be defined in separate files (and potentially reused as modules). See the [Examples](/examples/basic) for a comparison.

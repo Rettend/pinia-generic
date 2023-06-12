@@ -54,65 +54,25 @@ type BaseStore<T> = PiniaStore<
   }
 >
 
-// function baseStore<T extends Category | Todo>() {
-//   return defineGenericStore<BaseStore<T>>({
-//     state: {
-//       current: null,
-//       all: [],
-//     },
-//     getters: {
-//       getLength() {
-//         return this.all.length
-//       },
-//       getName() {
-//         return this.current?.name
-//       },
-//       isDone() {
-//         if (this.current && 'done' in this.current)
-//           return this.current?.done
-//       },
-//     },
-//     actions: {
-//       add(item: T) {
-//         this.all.push(item)
-//       },
-//     },
-//   })
-// }
-
-// splitting the generic store too
-
-function baseState<T>() {
-  return createState<BaseStore<T>>({
-    current: null,
-    all: [],
-  })
-}
-
-function baseGetters<T extends Category>() {
-  return createGetters<BaseStore<T>>({
-    getLength() {
-      return this.all.length
-    },
-    getName() {
-      return this.current?.name
-    },
-  })
-}
-
-function baseActions<T>() {
-  return createActions<BaseStore<T>>({
-    add(item: T) {
-      this.all.push(item)
-    },
-  })
-}
-
 function baseStore<T extends Category>() {
   return defineGenericStore<BaseStore<T>>({
-    state: baseState<T>(),
-    getters: baseGetters<T>(),
-    actions: baseActions<T>(),
+    state: {
+      current: null,
+      all: [],
+    },
+    getters: {
+      getLength() {
+        return this.all.length
+      },
+      getName() {
+        return this.current?.name
+      },
+    },
+    actions: {
+      add(item: T) {
+        this.all.push(item)
+      },
+    },
   })
 }
 
@@ -134,76 +94,20 @@ interface Book {
   price: number
 }
 
-interface ProductState<T> {
-  all: T[]
-}
-
-interface ProductGetters {
-  getTotal(): number
-  getMaxPrice(): number
-}
-
-interface ProductActions<T> {
-  add(item: T): void
-}
-
-type ProductStore<T> = PiniaStore<
-  'product',
-  ProductState<T>,
-  ProductGetters,
-  ProductActions<T>
->
-
-function productState<T>() {
-  return createState<ProductStore<T>>({
-    all: [],
-  })
-}
-
-function productGetters<T extends Book>() {
-  return createGetters<ProductStore<T>>({
-    getTotal() {
-      return this.all.reduce((total, item) => total + item.price, 0)
-    },
-    getMaxPrice() {
-      return this.all.reduce((max, item) => Math.max(max, item.price), 0)
-    },
-  })
-}
-
-function productActions<T>() {
-  return createActions<ProductStore<T>>({
-    add(item: T) {
-      this.all.push(item)
-    },
-  })
-}
-
-function productStore<T extends Book>() {
-  return defineGenericStore<ProductStore<T>>({
-    state: productState<T>(),
-    getters: productGetters<T>(),
-    actions: productActions<T>(),
-  })
-}
-
-interface BookState {
-  active: Book | null
-}
-
-interface BookGetters {
-  getAveragePrice(): number
-}
-
 type BookStore = PiniaStore<
   'book',
-  BookState,
-  BookGetters,
+  {
+    active: Book | null
+  },
+  {
+    getTotal(): number
+    getAveragePrice(): number
+  },
   {},
-  ProductStore<Book>
+  BaseStore<Book>
 >
 
-const bookState = createState<BookStore, ProductStore<Book>>({
+const bookState = createState<BookStore, BaseStore<Book>>({
   active: null,
   all: [
     { id: 1, name: 'The Lord of the Rings', price: 20 },
@@ -212,17 +116,20 @@ const bookState = createState<BookStore, ProductStore<Book>>({
   ],
 })
 
-const bookGetters = createGetters<BookStore, ProductStore<Book>>({
+const bookGetters = createGetters<BookStore, BaseStore<Book>>({
+  getTotal() {
+    return this.all.reduce((total, item) => total + item.price, 0)
+  },
   getAveragePrice() {
     return this.getTotal / this.all.length
   },
 })
 
-export const useBookStore = useStore<BookStore, ProductStore<Book>>(
+export const useBookStore = useStore<BookStore, BaseStore<Book>>(
   'book',
   {
     state: bookState,
     getters: bookGetters,
   },
-  productStore<Book>(),
+  baseStore<Book>(),
 )
