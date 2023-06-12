@@ -1,5 +1,6 @@
 import { type Store, type StoreDefinition, defineStore } from 'pinia'
 import type { ExtractStore, PiniaActionThis, PiniaGetterThis, StoreThis } from './types'
+import { filterUndefined } from './utils'
 
 // #region createState
 /**
@@ -65,34 +66,6 @@ export function defineGenericStore<
   }
 }
 // #endregion defineGenericStore
-
-function filterUndefined<T extends Record<string, any>>(obj: T, undefinedProps: Set<string>): T {
-  const result = Object.keys (obj).reduce ((result, key) => {
-    const value = obj[key]
-    if (value !== undefined) {
-      if (typeof value === 'object' && value !== obj && value !== null) {
-        for (const subKey of Object.keys(value)) {
-          if (value[subKey] === undefined)
-            undefinedProps.add (subKey)
-          else
-            result[key as keyof T] = value
-        }
-      }
-    }
-    return result
-  }, {} as T)
-
-  for (const prop of undefinedProps) {
-    for (const key of Object.keys(result)) {
-      for (const subKey of Object.keys(result[key])) {
-        if (subKey === prop)
-          delete result[key][subKey]
-      }
-    }
-  }
-
-  return result
-}
 
 // #region useStore
 /**
