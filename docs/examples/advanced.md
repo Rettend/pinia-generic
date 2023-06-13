@@ -30,7 +30,7 @@ export const useTestStore = useStore<TestStore>('test', {
 
 We can get creative and add parameters to a generic store function:
 
-```ts{10-12}
+```ts{8-10,21}
 function baseStore<T extends Category>(
   persist = false,
 ) {
