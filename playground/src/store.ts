@@ -54,7 +54,9 @@ type BaseStore<T> = PiniaStore<
   }
 >
 
-function baseStore<T extends Category>() {
+function baseStore<T extends Category>(
+  persist = false,
+) {
   return defineGenericStore<BaseStore<T>>({
     state: {
       current: null,
@@ -73,6 +75,9 @@ function baseStore<T extends Category>() {
         this.all.push(item)
       },
     },
+    options: {
+      persist,
+    },
   })
 }
 
@@ -83,10 +88,8 @@ export const useCategoryStore = useStore<CategoryStore, BaseStore<Category>>(
     getters,
     actions,
   },
-  baseStore<Category>(),
+  baseStore<Category>(true),
 )
-
-// TODO: support options (persistedstate, etc.)
 
 interface Book {
   id: number
@@ -133,3 +136,19 @@ export const useBookStore = useStore<BookStore, BaseStore<Book>>(
   },
   baseStore<Book>(),
 )
+
+type TestStore = PiniaStore<
+  'test',
+  {
+    someState: string
+  }
+>
+
+export const useTestStore = useStore<TestStore>('test', {
+  state: {
+    someState: 'hello pinia',
+  },
+  options: {
+    persist: true,
+  },
+})

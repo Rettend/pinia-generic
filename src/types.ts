@@ -1,5 +1,5 @@
 /* eslint-disable antfu/generic-spacing */
-import type { StateTree, Store } from 'pinia'
+import type { DefineStoreOptions, StateTree, Store } from 'pinia'
 
 // #region PiniaGetterThis
 /**
@@ -39,6 +39,8 @@ export interface StoreThis<TStore extends Store, TGenericStore extends Store = S
   state?: Omit<ExtractStore<TStore>['state'], keyof ExtractStore<TGenericStore>['state']> & Partial<ExtractStore<TGenericStore>['state']>
   getters?: PiniaGetterThis<TStore, TGenericStore>
   actions?: PiniaActionThis<TStore, TGenericStore>
+  options?: Omit<DefineStoreOptions<TStore['$id'], TStore['$state'], ExtractStore<TStore>['getters'], ExtractStore<TStore>['actions']>, 'id'>
+  // options?: DefineStoreOptionsBase<ExtractStore<TStore>['state'], TStore>
 }
 // #endregion StoreThis
 

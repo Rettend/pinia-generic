@@ -101,7 +101,10 @@ export function useStore<
       ...genericStore.actions,
       ...store.actions,
     },
-  }) as StoreDefinition<
+    ...genericStore.options,
+    ...store.options,
+  },
+  ) as StoreDefinition<
     TStore['$id'],
     ExtractStore<TStore>['state'],
     ExtractStore<TStore>['getters'],

@@ -1,12 +1,18 @@
 <script setup lang="ts">
-import { useBookStore, useCategoryStore } from './store'
+import { useBookStore, useCategoryStore, useTestStore } from './store'
 
 const category = useCategoryStore()
 const book = useBookStore()
+const test = useTestStore()
+
+test.someState = 'Hello World'
 </script>
 
 <template>
   <div flex="~ col" font-sans p-3 gap-4>
+    <p>
+      {{ test.someState }}
+    </p>
     <div
       flex items-center justify-center w-32 h-32 text-4xl font-bold text-white bg-blue-500 rounded-full cursor-pointer
       @click="category.add({ name: 'Cat', id: category.getMaxId + 1 })"
