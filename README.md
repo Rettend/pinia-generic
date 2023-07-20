@@ -6,7 +6,7 @@
   </a>
 </p>
 
-# Pinia Generic
+# Pinia Generic Store
 
 - 🧩 Create generic stores that can be reused, massively reducing duplicate code in large projects
 - 📁 Split stores into multiple files, so relevant code can be grouped together
