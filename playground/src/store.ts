@@ -57,13 +57,11 @@ type BaseStore<T> = PiniaStore<
 function baseStore<T extends Category>(
   persist = false,
 ) {
-  const defaultState = {
-    current: null,
-    all: [],
-  }
-
   return defineGenericStore<BaseStore<T>>({
-    state: persist ? defaultState : { current: null, all: [] },
+    state: {
+      current: null,
+      all: [],
+    },
     getters: {
       getLength() {
         return this.all.length
