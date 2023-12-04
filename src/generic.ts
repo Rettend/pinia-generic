@@ -55,13 +55,16 @@ export function createActions<
  * Defines a generic store.
  * @template TStore - The store type.
  * @param store - The store object.
+ * @param baseStore - Another base store to extend.
  */
 export function defineGenericStore<
-  TStore extends Store,
+  TStore extends Store, TGenericStore extends Store = Store,
 >(
-  store: StoreThis<TStore>,
+  store: StoreThis<TStore, TGenericStore>,
+  baseStore: StoreThis<TGenericStore> = {},
 ) {
   return {
+    ...baseStore,
     ...store,
   }
 }

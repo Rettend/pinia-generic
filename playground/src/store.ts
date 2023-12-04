@@ -57,11 +57,13 @@ type BaseStore<T> = PiniaStore<
 function baseStore<T extends Category>(
   persist = false,
 ) {
+  const defaultState = {
+    current: null,
+    all: [],
+  }
+
   return defineGenericStore<BaseStore<T>>({
-    state: {
-      current: null,
-      all: [],
-    },
+    state: persist ? defaultState : { current: null, all: [] },
     getters: {
       getLength() {
         return this.all.length
@@ -152,3 +154,67 @@ export const useTestStore = useStore<TestStore>('test', {
     persist: true,
   },
 })
+
+// Experimenting with multi-level inheritance
+type BaseStore1<T> = PiniaStore<
+  'base1',
+  {
+    current: T | null
+  },
+  {
+    getCurrent(): T | null
+  },
+  {
+    setCurrent(item: T): void
+  }
+>
+
+type BaseStore2<T> = PiniaStore<
+  'base2',
+  {
+    other: T | null
+  },
+  {
+    getOther(): T | null
+  },
+  {
+    setOther(item: T): void
+  },
+  BaseStore1<T>
+>
+
+function baseStore1<T extends Category>() {
+  return defineGenericStore<BaseStore1<T>>({
+    state: {
+      current: null,
+    },
+    getters: {
+      getCurrent() {
+        return this.current
+      },
+    },
+    actions: {
+      setCurrent(item: T) {
+        this.current = item
+      },
+    },
+  })
+}
+
+function baseStore2<T extends Category>() {
+  return defineGenericStore<BaseStore2<T>, BaseStore1<T>>({
+    state: {
+      other: null,
+    },
+    getters: {
+      getOther() {
+        return this.other
+      },
+    },
+    actions: {
+      setOther(item: T) {
+        this.other = item
+      },
+    },
+  }, baseStore1<T>())
+}
