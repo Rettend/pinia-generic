@@ -61,7 +61,7 @@ export function defineGenericStore<
   TStore extends Store, TGenericStore extends Store = Store,
 >(
   store: StoreThis<TStore, TGenericStore>,
-  baseStore: StoreThis<TGenericStore> = {},
+  baseStore: StoreThis<TStore, TGenericStore> = {},
 ) {
   return {
     ...baseStore,

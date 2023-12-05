@@ -200,7 +200,7 @@ function baseStore1<T extends Category>() {
 }
 
 function baseStore2<T extends Category>() {
-  return defineGenericStore<BaseStore2<T>, BaseStore1<T>>({
+  return defineGenericStore<BaseStore1<T>, BaseStore2<T>>({
     state: {
       other: null,
     },
@@ -211,7 +211,7 @@ function baseStore2<T extends Category>() {
     },
     actions: {
       setOther(item: T) {
-        this.other = item
+
       },
     },
   }, baseStore1<T>())
