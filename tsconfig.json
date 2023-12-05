@@ -6,7 +6,7 @@
     "declaration": false,
     "declarationMap": false,
     "esModuleInterop": true,
-    // "exactOptionalPropertyTypes": true,
+    "exactOptionalPropertyTypes": true,
     "forceConsistentCasingInFileNames": true,
     "moduleResolution": "node",
     "noFallthroughCasesInSwitch": true,

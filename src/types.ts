@@ -1,5 +1,5 @@
 /* eslint-disable antfu/generic-spacing */
-import type { DefineStoreOptions, StateTree, Store } from 'pinia'
+import type { DefineStoreOptionsBase, StateTree, Store } from 'pinia'
 
 // #region PiniaGetterThis
 /**
@@ -8,9 +8,8 @@ import type { DefineStoreOptions, StateTree, Store } from 'pinia'
  * @internal
  */
 export type PiniaGetterThis<TStore extends Store, TGenericStore extends Store = TStore> = {
-  [K in keyof (Omit<ExtractStore<TStore>['getters'], keyof ExtractStore<TGenericStore>['getters']> & Partial<ExtractStore<TGenericStore>['getters']>)]:
-  (this: TStore & NoId<TGenericStore>) => ReturnType<ExtractStore<TStore>['getters'][K]>
-  // } & Partial<ExtractStore<TGenericStore>['getters']>
+  [K in keyof (Omit<ExtractStore<TStore>['getters'], keyof ExtractStore<TGenericStore>['getters']> & Partial<ExtractStore<TGenericStore>['getters']>)]?:
+  ((this: TStore & NoId<TGenericStore>) => ReturnType<ExtractStore<TStore>['getters'][K]>) | undefined
 }
 // #endregion PiniaGetterThis
 
@@ -21,10 +20,9 @@ export type PiniaGetterThis<TStore extends Store, TGenericStore extends Store = 
  * @internal
  */
 export type PiniaActionThis<TStore extends Store, TGenericStore extends Store = TStore> = {
-  [K in keyof (Omit<ExtractStore<TStore>['actions'], keyof ExtractStore<TGenericStore>['actions']> & Partial<ExtractStore<TGenericStore>['actions']>)]:
+  [K in keyof (Omit<ExtractStore<TStore>['actions'], keyof ExtractStore<TGenericStore>['actions']> & Partial<ExtractStore<TGenericStore>['actions']>)]?:
   ((this: TStore & NoId<TGenericStore>, ...args: Parameters<ExtractStore<TStore>['actions'][K]>)
   => ReturnType<ExtractStore<TStore>['actions'][K]>) | undefined
-  // } & Partial<ExtractStore<TGenericStore>['actions']>
 }
 // #endregion PiniaActionThis
 
@@ -35,11 +33,14 @@ export type PiniaActionThis<TStore extends Store, TGenericStore extends Store = 
  * @internal
  */
 export interface StoreThis<TStore extends Store, TGenericStore extends Store = Store> {
-  state?: Omit<ExtractStore<TStore>['state'], keyof ExtractStore<TGenericStore>['state']> & Partial<ExtractStore<TGenericStore>['state']>
+  state?: {
+    [K in keyof (Omit<ExtractStore<TStore>['state'], keyof ExtractStore<TGenericStore>['state']> & Partial<ExtractStore<TGenericStore>['state']>)]:
+    (Omit<ExtractStore<TStore>['state'], keyof ExtractStore<TGenericStore>['state']> & Partial<ExtractStore<TGenericStore>['state']>)[K] | undefined;
+  }
   getters?: PiniaGetterThis<TStore, TGenericStore>
   actions?: PiniaActionThis<TStore, TGenericStore>
-  options?: Omit<DefineStoreOptions<TStore['$id'], TStore['$state'], ExtractStore<TStore>['getters'], ExtractStore<TStore>['actions']>, 'id'>
-  // options?: DefineStoreOptionsBase<ExtractStore<TStore>['state'], TStore>
+  // options?: Omit<DefineStoreOptions<TStore['$id'], TStore['$state'], ExtractStore<TStore>['getters'], ExtractStore<TStore>['actions']>, 'id'>
+  options?: DefineStoreOptionsBase<ExtractStore<TStore>['state'], TStore>
 }
 // #endregion StoreThis
 

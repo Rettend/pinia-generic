@@ -12,7 +12,10 @@ import { filterUndefined } from './utils'
 export function createState<
   TStore extends Store, TGenericStore extends Store = Store,
 >(
-  state: Omit<ExtractStore<TStore>['state'], keyof ExtractStore<TGenericStore>['state']> & Partial<ExtractStore<TGenericStore>['state']>,
+  state: {
+    [K in keyof (Omit<ExtractStore<TStore>['state'], keyof ExtractStore<TGenericStore>['state']> & Partial<ExtractStore<TGenericStore>['state']>)]:
+    (Omit<ExtractStore<TStore>['state'], keyof ExtractStore<TGenericStore>['state']> & Partial<ExtractStore<TGenericStore>['state']>)[K] | undefined;
+  },
 ): ExtractStore<TStore>['state'] {
   return state
 }
@@ -61,8 +64,13 @@ export function defineGenericStore<
   TStore extends Store, TGenericStore extends Store = Store,
 >(
   store: StoreThis<TStore, TGenericStore>,
-  baseStore: StoreThis<TStore, TGenericStore> = {},
+  baseStore: StoreThis<TGenericStore> = {},
 ) {
+  const undefinedProps = new Set<string>()
+
+  store = filterUndefined(store, undefinedProps)
+  baseStore = filterUndefined(baseStore, undefinedProps)
+
   return {
     ...baseStore,
     ...store,
