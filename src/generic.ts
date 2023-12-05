@@ -74,6 +74,22 @@ export function defineGenericStore<
   return {
     ...baseStore,
     ...store,
+    // state: {
+    //   ...baseStore?.state,
+    //   ...store?.state,
+    // },
+    // getters: {
+    //   ...baseStore?.getters,
+    //   ...store?.getters,
+    // },
+    // actions: {
+    //   ...baseStore?.actions,
+    //   ...store?.actions,
+    // },
+    // options: {
+    //   ...baseStore?.options,
+    //   ...store?.options,
+    // },
   }
 }
 // #endregion defineGenericStore

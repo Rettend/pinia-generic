@@ -34,7 +34,7 @@ export type PiniaActionThis<TStore extends Store, TGenericStore extends Store = 
  */
 export interface StoreThis<TStore extends Store, TGenericStore extends Store = Store> {
   state?: {
-    [K in keyof (Omit<ExtractStore<TStore>['state'], keyof ExtractStore<TGenericStore>['state']> & Partial<ExtractStore<TGenericStore>['state']>)]:
+    [K in keyof (Omit<ExtractStore<TStore>['state'], keyof ExtractStore<TGenericStore>['state']> & Partial<ExtractStore<TGenericStore>['state']>)]?:
     (Omit<ExtractStore<TStore>['state'], keyof ExtractStore<TGenericStore>['state']> & Partial<ExtractStore<TGenericStore>['state']>)[K] | undefined;
   }
   getters?: PiniaGetterThis<TStore, TGenericStore>

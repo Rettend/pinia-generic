@@ -255,5 +255,5 @@ export const useCategoryStore2 = useStore<CategoryStore2, BaseStore2<Category>>(
       },
     },
   },
-  baseStore2<Category>(),
+  baseStore2<Category>(), // what is this error and why
 )
