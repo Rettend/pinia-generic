@@ -158,12 +158,14 @@ type BaseStore1<T> = PiniaStore<
   'base1',
   {
     current: T | null
+    all: T[]
   },
   {
-    getCurrent(): T | null
+    getLength(): number
+    
   },
   {
-    setCurrent(item: T): void
+    add(item: T): void
   }
 >
 
@@ -174,9 +176,10 @@ type BaseStore2<T> = PiniaStore<
   },
   {
     getOther(): T | null
+    getName(): string | undefined
   },
   {
-    setOther(item: T): void
+    remove(id: number): void
   },
   BaseStore1<T>
 >
@@ -185,15 +188,16 @@ function baseStore1<T extends Category>() {
   return defineGenericStore<BaseStore1<T>>({
     state: {
       current: null,
+      all: [],
     },
     getters: {
-      getCurrent() {
-        return this.current
+      getLength() {
+        return this.all.length
       },
     },
     actions: {
-      setCurrent(item: T) {
-        this.current = item
+      add(item: T) {
+        this.all.push(item)
       },
     },
   })
@@ -210,9 +214,41 @@ function baseStore2<T extends Category>() {
       },
     },
     actions: {
-      setOther(item: T) {
-
+      remove(id: number) {
+        this.all = this.all.filter(item => item.id !== id)
       },
     },
   }, baseStore1<T>())
 }
+
+type CategoryStore2 = PiniaStore<
+  'category2',
+  {
+    description: string
+  },
+  {
+    getMaxId(): number
+  },
+  {
+    retain(f: () => boolean): void
+  },
+  BaseStore2<Category>
+>
+
+export const useCategoryStore2 = useStore<CategoryStore2, BaseStore2<Category>>(
+  'category2',
+  {
+    state: {
+      description: 'This is a category store',
+    },
+    getters: {
+      getMaxId() {
+        return this.
+      },
+    },
+    actions: {
+
+    },
+  },
+  baseStore2<Category>(),
+)

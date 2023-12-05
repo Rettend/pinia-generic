@@ -8,11 +8,9 @@ import type { DefineStoreOptions, StateTree, Store } from 'pinia'
  * @internal
  */
 export type PiniaGetterThis<TStore extends Store, TGenericStore extends Store = TStore> = {
-  [K in keyof Omit<ExtractStore<TStore>['getters'], keyof ExtractStore<TGenericStore>['getters']>]:
-  (this: TStore) => ReturnType<ExtractStore<TStore>['getters'][K]>
-} & {
-  [K in keyof Partial<ExtractStore<TGenericStore>['getters']>]:
-  ((this: TStore) => ReturnType<ExtractStore<TGenericStore>['getters'][K]>) | undefined
+  [K in keyof (Omit<ExtractStore<TStore>['getters'], keyof ExtractStore<TGenericStore>['getters']> & Partial<ExtractStore<TGenericStore>['getters']>)]:
+  (this: TStore & NoId<TGenericStore>) => ReturnType<ExtractStore<TStore>['getters'][K]>
+  // } & Partial<ExtractStore<TGenericStore>['getters']>
 }
 // #endregion PiniaGetterThis
 
@@ -23,10 +21,11 @@ export type PiniaGetterThis<TStore extends Store, TGenericStore extends Store = 
  * @internal
  */
 export type PiniaActionThis<TStore extends Store, TGenericStore extends Store = TStore> = {
-  [K in keyof Omit<ExtractStore<TStore>['actions'], keyof ExtractStore<TGenericStore>['actions']>]:
-  ((this: TStore, ...args: Parameters<ExtractStore<TStore>['actions'][K]>)
+  [K in keyof (Omit<ExtractStore<TStore>['actions'], keyof ExtractStore<TGenericStore>['actions']> & Partial<ExtractStore<TGenericStore>['actions']>)]:
+  ((this: TStore & NoId<TGenericStore>, ...args: Parameters<ExtractStore<TStore>['actions'][K]>)
   => ReturnType<ExtractStore<TStore>['actions'][K]>) | undefined
-} & Partial<ExtractStore<TGenericStore>['actions']>
+  // } & Partial<ExtractStore<TGenericStore>['actions']>
+}
 // #endregion PiniaActionThis
 
 // #region StoreThis
@@ -83,3 +82,5 @@ export type PiniaStore<
   Actions & ExtractStore<TGenericStore>['actions']
 >
 // #endregion PiniaStore
+
+export type NoId<TStore extends Partial<Store>> = Omit<TStore, '$id'>
