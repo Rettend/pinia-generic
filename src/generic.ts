@@ -65,31 +65,29 @@ export function defineGenericStore<
 >(
   store: StoreThis<TStore, TGenericStore>,
   baseStore: StoreThis<TGenericStore> = {},
-) {
+): StoreThis<TStore> {
   const undefinedProps = new Set<string>()
 
   store = filterUndefined(store, undefinedProps)
   baseStore = filterUndefined(baseStore, undefinedProps)
 
   return {
-    ...baseStore,
-    ...store,
-    // state: {
-    //   ...baseStore?.state,
-    //   ...store?.state,
-    // },
-    // getters: {
-    //   ...baseStore?.getters,
-    //   ...store?.getters,
-    // },
-    // actions: {
-    //   ...baseStore?.actions,
-    //   ...store?.actions,
-    // },
-    // options: {
-    //   ...baseStore?.options,
-    //   ...store?.options,
-    // },
+    state: {
+      ...baseStore?.state,
+      ...store?.state,
+    },
+    getters: {
+      ...baseStore?.getters,
+      ...store?.getters,
+    },
+    actions: {
+      ...baseStore?.actions,
+      ...store?.actions,
+    },
+    options: {
+      ...baseStore?.options,
+      ...store?.options,
+    },
   }
 }
 // #endregion defineGenericStore

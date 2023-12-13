@@ -153,7 +153,6 @@ export const useTestStore = useStore<TestStore>('test', {
   },
 })
 
-// Experimenting with multi-level inheritance
 type BaseStore1<T> = PiniaStore<
   'base1',
   {
@@ -255,5 +254,5 @@ export const useCategoryStore2 = useStore<CategoryStore2, BaseStore2<Category>>(
       },
     },
   },
-  baseStore2<Category>(), // what is this error and why
+  baseStore2<Category>(),
 )
