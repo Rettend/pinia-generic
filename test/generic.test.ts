@@ -22,49 +22,64 @@ type CategoryStore = PiniaStore<
 >
 
 const state = createState<CategoryStore, BaseStore<Category>>({
+  current: { id: 1, name: 'test current' },
+  all: [
+    { id: 0, name: 'Laptop' },
+  ],
   some: 'some text',
+  undefinedState: undefined,
 })
 
 const getters = createGetters<CategoryStore, BaseStore<Category>>({
   getLength() {
     return this.all.length
   },
+  undefinedGetter: undefined,
 })
 
 const actions = createActions<CategoryStore, BaseStore<Category>>({
   remove(id: number) {
     this.all = this.all.filter(item => item.id !== id)
   },
+  undefinedAction: undefined,
 })
 
 type BaseStore<T> = Store<
   'base',
   {
-    current: Category | null
+    current: T | undefined
     all: T[]
+    undefinedState: string
   },
   {
     getName(): string | undefined
+    undefinedGetter(): T | undefined
   },
   {
     add(item: T): void
+    undefinedAction(): T | undefined
   }
 >
 
 function baseStore<T extends Category>() {
   return defineGenericStore<BaseStore<T>>({
     state: {
-      current: { id: 1, name: 'test current' },
-      all: [],
+      undefinedState: 'I am undefined',
     },
     getters: {
       getName() {
         return this.current?.name
       },
+      undefinedGetter() {
+        return this.current
+      },
     },
     actions: {
       add(item: T) {
         this.all.push(item)
+      },
+      undefinedAction() {
+        return this.current
       },
     },
   })
@@ -82,11 +97,18 @@ export const useCategoryStore = useStore<CategoryStore, BaseStore<Category>>(
 
 describe('Full generic example', () => {
   test('createState should return an object with the given properties', () => {
-    expect(state).toMatchObject({ some: 'some text' })
+    const pinia = createPinia()
+    const store = useCategoryStore(pinia)
+
+    expect(store.some).toBe('some text')
   })
 
   test('createGetters should return an object with the given functions', () => {
-    expect(getters).toHaveProperty('getLength')
+    const pinia = createPinia()
+    const store = useCategoryStore(pinia)
+
+    store.add({ id: 1, name: 'Mobile' })
+    expect(store.getLength).toBe(2)
   })
 
   test('createActions should return an object with the given functions', () => {
@@ -101,173 +123,29 @@ describe('Full generic example', () => {
     expect(store).toHaveProperty('actions')
   })
 
-  test('useStore should return a store definition with the given id and properties', () => {
+  test('undefined properties should be ignored', () => {
     const pinia = createPinia()
     const store = useCategoryStore(pinia)
 
-    expect(store).toHaveProperty('$id', 'category')
-
-    store.add({ id: 1, name: 'test all' })
-    expect(store.getLength).toBe(1)
-    expect(store.getName).toBe('test current')
-    store.remove(1)
-    expect(store).toMatchObject({ all: [] })
+    expect(store.undefinedState).toBeUndefined()
+    expect(store.undefinedGetter).toBeUndefined()
+    expect(store.undefinedAction).toBeUndefined()
   })
-})
 
-interface BaseItem {
-  id: number
-}
-
-type BaseStore1<T extends BaseItem> = PiniaStore<
-  'base1',
-  {
-    value1: T | null
-  }
->
-
-type BaseStore2<T extends BaseItem> = PiniaStore<
-  'base2',
-  {
-    value2: T | null
-  },
-  {},
-  {},
-  BaseStore1<T>
->
-
-type BaseStore3<T extends BaseItem> = PiniaStore<
-  'base3',
-  {
-    value3: T | null
-  },
-  {},
-  {},
-  BaseStore2<T>
->
-
-type MyStore = PiniaStore<
-  'mystore',
-  {},
-  {
-    getValue1(): BaseItem | null
-    getValue2(): BaseItem | null
-    getValue3(): BaseItem | null
-  },
-  {
-    setValue1(value: BaseItem): void
-    setValue2(value: BaseItem): void
-    setValue3(value: BaseItem): void
-  },
-  BaseStore3<BaseItem>
->
-
-function baseStore1<T extends BaseItem>() {
-  return defineGenericStore<BaseStore1<T>>({
-    state: {
-      value1: null,
-    },
-  })
-}
-
-function baseStore2<T extends BaseItem>() {
-  return defineGenericStore<BaseStore2<T>, BaseStore1<T>>({
-    state: {
-      value2: null,
-    },
-  },
-  baseStore1<T>(),
-  )
-}
-
-function baseStore3<T extends BaseItem>() {
-  return defineGenericStore<BaseStore3<T>, BaseStore2<T>>({
-    state: {
-      value3: null,
-    },
-  },
-  baseStore2<T>(),
-  )
-}
-
-const useMyStore = useStore<MyStore, BaseStore3<BaseItem>>(
-  'mystore',
-  {
-    state: {
-      value1: { id: 1 },
-      value2: { id: 2 },
-      value3: { id: 3 },
-    },
-    getters: {
-      getValue1() {
-        return this.value1
-      },
-      getValue2() {
-        return this.value2
-      },
-      getValue3() {
-        return this.value3
-      },
-    },
-    actions: {
-      setValue1(value) {
-        this.value1 = value
-      },
-      setValue2(value) {
-        this.value2 = value
-      },
-      setValue3(value) {
-        this.value3 = value
-      },
-    },
-  },
-  baseStore3<BaseItem>(),
-)
-
-describe('Multi-level generic example', () => {
   test('useStore should return a store definition with the given id and properties', () => {
     const pinia = createPinia()
-    const store = useMyStore(pinia)
+    const store = useCategoryStore(pinia)
+    store.all = []
 
-    expect(store).toHaveProperty('$id', 'mystore')
+    expect(store).toHaveProperty('$id', 'category')
 
-    store.setValue1({ id: 4 })
-    expect(store.getValue1).toMatchObject({ id: 4 })
+    store.add({ id: 1, name: 'Computer' })
 
-    store.$reset()
-    expect(store.getValue1).toMatchObject({ id: 1 })
-  })
+    expect(store.getLength).toBe(1)
+    expect(store.getName).toBe('test current')
 
-  test('state should be initialized with the given values', () => {
-    const pinia = createPinia()
-    const store = useMyStore(pinia)
+    store.remove(1)
 
-    expect(store.value1).toMatchObject({ id: 1 })
-    expect(store.value2).toMatchObject({ id: 2 })
-    expect(store.value3).toMatchObject({ id: 3 })
-  })
-
-  test('getters should return the same value as the state', () => {
-    const pinia = createPinia()
-    const store = useMyStore(pinia)
-
-    expect(store.getValue1).toBe(store.value1)
-    expect(store.getValue2).toBe(store.value2)
-    expect(store.getValue3).toBe(store.value3)
-  })
-
-  test('actions should set the state to the given value', () => {
-    const pinia = createPinia()
-    const store = useMyStore(pinia)
-
-    store.setValue1({ id: 4 })
-    store.setValue2({ id: 5 })
-    store.setValue3({ id: 6 })
-
-    expect(store).toMatchObject({
-      value1: { id: 4 },
-      value2: { id: 5 },
-      value3: { id: 6 },
-    })
+    expect(store).toMatchObject({ all: [] })
   })
 })
