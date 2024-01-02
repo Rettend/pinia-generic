@@ -4,11 +4,13 @@ outline: deep
 
 # Generic Stores
 
+In large projects, you might have a lot of stores that are very similar. With generic stores, you only need to define the common parts once, and then reuse them in other stores.
+
 ## Simple generic store
 
-Just like with the regular store, we need to define a type for the generic store.
+Just like when splitting stores, we need to define a type for the generic store.
 
-The only difference is that we can add arbitrary generic parameters to the type.
+The only difference is that we can add a generic parameter to our store's type.
 
 ```ts
 type BaseStore<T> = PiniaStore<
@@ -31,11 +33,13 @@ type BaseStore<T> = PiniaStore<
 
 A generic store needs to be a generic function, which returns a `defineGenericStore()` call. We define `T` in our function, and then pass it to the `defineGenericStore()` function.
 
-Also, we might need a type constraint on `T` using `extends`. This is when you want to access properties of `T` (in this case `name`) in the generic store.
+Also, you might need a type constraint on `T` using `extends`. This is when you want to access a property `T` might have (in this case `name`) in the generic store. This way the generic store will work with any type that has a `name` property.
+
+You can also use `T extends Category`.
 
 ```ts
-// const baseStore = <T extends Category>() => { // or
-function baseStore<T extends Category>() {
+// const baseStore = <T>() => { // or
+function baseStore<T extends { name: string }>() {
   return defineGenericStore<BaseStore<T>>({
     state: {
       current: null,
@@ -62,7 +66,7 @@ function baseStore<T extends Category>() {
 
 ## Using the generic store
 
-Now we have a type that's used throughout our project (this will go in the place of `T`).
+Let's say we have a type that's used throughout our project (this will go in the place of `T`):
 
 ```ts
 interface Category {
@@ -109,7 +113,7 @@ Result:
 
 ## Extending the generic store
 
-The store that extends the generic store adds some properties that are specific to the store.
+The store that extends the generic store can add some properties that are specific to the store, but still use the generic store's properties.
 
 ```ts{10}
 type CategoryStore = PiniaStore<
@@ -125,7 +129,7 @@ type CategoryStore = PiniaStore<
 >
 ```
 
-We can go ahead and use the `create` functions.
+Let's go ahead and split the state and getters just because we can.
 
 ```ts
 const state = createState<CategoryStore, BaseStore<Category>>({
@@ -152,7 +156,7 @@ export const useCategoryStore = useStore<CategoryStore, BaseStore<Category>>(
 )
 ```
 
-We can also just define the store in one go, if you don't want to split it up.
+We can also just define the store inline, if there's no need to split it up.
 
 ```ts
 export const useCategoryStore = useStore<CategoryStore, BaseStore<Category>>(
@@ -207,11 +211,16 @@ export const useTodoStore = useStore<TodoStore, BaseStore<Todo>>(
 )
 ```
 
-Here the `Todo` type has a `name` property, so the `getName()` getter will work. However, we will need a type guard to access the `done` property.
+Here the `Todo` type has a `name` property, so the `getName()` getter will work. However, we will need a type guard to access the `done` property, so let's move `baseStore()`'s type constraints to a separate type.
 
 ```ts
-function baseStore<T extends Category>() {} // [!code --]
-function baseStore<T extends Category | Todo>() { // [!code ++]
+interface BaseStoreType { // [!code ++]
+  name: string // [!code ++]
+  done?: boolean // [!code ++]
+} // [!code ++]
+
+function baseStore<T extends { name: string }>() {} // [!code --]
+function baseStore<T extends BaseStoreType>() { // [!code ++]
   return defineGenericStore<BaseStore<T>>({
     state: {
       current: null,
@@ -222,11 +231,10 @@ function baseStore<T extends Category | Todo>() { // [!code ++]
         return this.all.length
       },
       getName() {
-        return this.current?.name // this.current is of type Category | Todo | null
+        return this.current?.name
       },
       isDone() { // [!code ++]
-        if (this.current && 'done' in this.current) // [!code ++]
-          return this.current.done // this.current is of type Todo // [!code ++]
+        return this.current?.done // [!code ++]
       }, // [!code ++]
     },
     actions: {
@@ -237,10 +245,24 @@ function baseStore<T extends Category | Todo>() { // [!code ++]
   })
 }
 ```
+  
+Don't forget to add `isDone(): boolean | undefined` to the generic store type's getters.
+
+And you probably want to extend your types with the `BaseStoreType` too.
+
+```ts{1}
+interface Todo extends BaseStoreType {
+  id: number
+  name: string
+  done: boolean
+}
+
+// ... Category as well
+```
 
 ## Overriding the generic store
 
-The generic store's properties are passed as optionals when defining the store. This means that we can override them.
+The generic store's properties are passed as optionals when defining the store. This means that we can override them, but they are not required (that would be undesirable).
 
 This allows you to add a default value to the generic store's state.
 
