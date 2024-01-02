@@ -9,7 +9,7 @@ import type { DefineStoreOptionsBase, StateTree, Store } from 'pinia'
  */
 export type PiniaGetterThis<TStore extends Store, TGenericStore extends Store = TStore> = {
   [K in keyof (Omit<ExtractStore<TStore>['getters'], keyof ExtractStore<TGenericStore>['getters']> & Partial<ExtractStore<TGenericStore>['getters']>)]?:
-  ((this: TStore & NoId<TGenericStore>) => ReturnType<ExtractStore<TStore>['getters'][K]>) | undefined
+  ((this: TStore & NoId<TGenericStore>) => ExtractStore<TStore>['getters'][K] extends (...args: any[]) => any ? ReturnType<ExtractStore<TStore>['getters'][K]> : never) | undefined
 }
 // #endregion PiniaGetterThis
 
@@ -21,8 +21,8 @@ export type PiniaGetterThis<TStore extends Store, TGenericStore extends Store = 
  */
 export type PiniaActionThis<TStore extends Store, TGenericStore extends Store = TStore> = {
   [K in keyof (Omit<ExtractStore<TStore>['actions'], keyof ExtractStore<TGenericStore>['actions']> & Partial<ExtractStore<TGenericStore>['actions']>)]?:
-  ((this: TStore & NoId<TGenericStore>, ...args: Parameters<ExtractStore<TStore>['actions'][K]>)
-  => ReturnType<ExtractStore<TStore>['actions'][K]>) | undefined
+  ((this: TStore & NoId<TGenericStore>, ...args: ExtractStore<TStore>['actions'][K] extends (...args: any[]) => any ? Parameters<ExtractStore<TStore>['actions'][K]> : never)
+  => ExtractStore<TStore>['actions'][K] extends (...args: any[]) => any ? ReturnType<ExtractStore<TStore>['actions'][K]> : never) | undefined
 }
 // #endregion PiniaActionThis
 
@@ -55,8 +55,16 @@ export interface StoreThis<TStore extends Store, TGenericStore extends Store = S
  * ```
  * @internal
  */
-export type ExtractStore<TStore extends Store> = TStore extends Store<string, infer S, infer G, infer A>
-  ? { state: S; getters: G; actions: A }
+export type ExtractStore<TStore extends Store> = TStore extends Store<
+  string,
+  infer S extends StateTree,
+  infer G,
+  infer A>
+  ? {
+      state: S
+      getters: G
+      actions: A
+    }
   : never
 // #endregion ExtractStore
 

@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { useBookStore, useCategoryStore2, useTestStore } from './store'
+import { useCategoryStore2, useTestStore } from './store'
 
 const category = useCategoryStore2()
-const book = useBookStore()
+// const book = useBookStore()
 const test = useTestStore()
 
 test.someState = 'Hello World'
