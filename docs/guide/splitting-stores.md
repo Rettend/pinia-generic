@@ -99,7 +99,7 @@ const getters = createGetters<CategoryStore>({
 })
 ```
 
-::: tip
+::: tip NOTE
 The whole point of this package is to properly type the `this` parameter, and the object passed to the `create` functions. If you misspell a property, or forget to add it, you will get a type error.
 :::
 

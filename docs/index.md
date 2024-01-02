@@ -24,7 +24,7 @@ features:
     details: Create generic stores that can be reused, massively reducing duplicate code in large projects
   - title: 📁 Split stores
     details: Split stores into multiple files, so relevant code can be grouped together
-  - title: 📦 Small size
-    details: It's mostly just types, so using the package is more lines of code than the package itself 😅
+  - title: 📦 Extend stores
+    details: Use store inheritance to create a hierarchy of generic stores
 ---
 

@@ -12,7 +12,10 @@ import { filterUndefined } from './utils'
 export function createState<
   TStore extends Store, TGenericStore extends Store = Store,
 >(
-  state: Omit<ExtractStore<TStore>['state'], keyof ExtractStore<TGenericStore>['state']> & Partial<ExtractStore<TGenericStore>['state']>,
+  state: {
+    [K in keyof (Omit<ExtractStore<TStore>['state'], keyof ExtractStore<TGenericStore>['state']> & Partial<ExtractStore<TGenericStore>['state']>)]:
+    (Omit<ExtractStore<TStore>['state'], keyof ExtractStore<TGenericStore>['state']> & Partial<ExtractStore<TGenericStore>['state']>)[K] | undefined;
+  },
 ): ExtractStore<TStore>['state'] {
   return state
 }
@@ -55,14 +58,36 @@ export function createActions<
  * Defines a generic store.
  * @template TStore - The store type.
  * @param store - The store object.
+ * @param baseStore - Another base store to extend.
  */
 export function defineGenericStore<
-  TStore extends Store,
+  TStore extends Store, TGenericStore extends Store = Store,
 >(
-  store: StoreThis<TStore>,
-) {
+  store: StoreThis<TStore, TGenericStore>,
+  baseStore: StoreThis<TGenericStore> = {},
+): StoreThis<TStore> {
+  const undefinedProps = new Set<string>()
+
+  store = filterUndefined(store, undefinedProps)
+  baseStore = filterUndefined(baseStore, undefinedProps)
+
   return {
-    ...store,
+    state: {
+      ...baseStore?.state,
+      ...store?.state,
+    },
+    getters: {
+      ...baseStore?.getters,
+      ...store?.getters,
+    },
+    actions: {
+      ...baseStore?.actions,
+      ...store?.actions,
+    },
+    options: {
+      ...baseStore?.options,
+      ...store?.options,
+    },
   }
 }
 // #endregion defineGenericStore

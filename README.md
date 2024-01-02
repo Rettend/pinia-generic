@@ -12,7 +12,7 @@
 
 - 🧩 Create generic stores that can be reused, massively reducing duplicate code in large projects
 - 📁 Split stores into multiple files, so relevant code can be grouped together
-- 📦 It's mostly just types, so using the package is more lines of code than the package itself 😅
+- 📦 Use store inheritance to create a hierarchy of generic stores
 
 ## Installation
 

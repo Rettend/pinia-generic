@@ -1,5 +1,5 @@
 /* eslint-disable antfu/generic-spacing */
-import type { DefineStoreOptions, StateTree, Store } from 'pinia'
+import type { DefineStoreOptionsBase, StateTree, Store } from 'pinia'
 
 // #region PiniaGetterThis
 /**
@@ -8,11 +8,8 @@ import type { DefineStoreOptions, StateTree, Store } from 'pinia'
  * @internal
  */
 export type PiniaGetterThis<TStore extends Store, TGenericStore extends Store = TStore> = {
-  [K in keyof Omit<ExtractStore<TStore>['getters'], keyof ExtractStore<TGenericStore>['getters']>]:
-  (this: TStore) => ReturnType<ExtractStore<TStore>['getters'][K]>
-} & {
-  [K in keyof Partial<ExtractStore<TGenericStore>['getters']>]:
-  ((this: TStore) => ReturnType<ExtractStore<TGenericStore>['getters'][K]>) | undefined
+  [K in keyof (Omit<ExtractStore<TStore>['getters'], keyof ExtractStore<TGenericStore>['getters']> & Partial<ExtractStore<TGenericStore>['getters']>)]?:
+  ((this: TStore & NoId<TGenericStore>) => ExtractStore<TStore>['getters'][K] extends (...args: any[]) => any ? ReturnType<ExtractStore<TStore>['getters'][K]> : never) | undefined
 }
 // #endregion PiniaGetterThis
 
@@ -23,10 +20,10 @@ export type PiniaGetterThis<TStore extends Store, TGenericStore extends Store = 
  * @internal
  */
 export type PiniaActionThis<TStore extends Store, TGenericStore extends Store = TStore> = {
-  [K in keyof Omit<ExtractStore<TStore>['actions'], keyof ExtractStore<TGenericStore>['actions']>]:
-  ((this: TStore, ...args: Parameters<ExtractStore<TStore>['actions'][K]>)
-  => ReturnType<ExtractStore<TStore>['actions'][K]>) | undefined
-} & Partial<ExtractStore<TGenericStore>['actions']>
+  [K in keyof (Omit<ExtractStore<TStore>['actions'], keyof ExtractStore<TGenericStore>['actions']> & Partial<ExtractStore<TGenericStore>['actions']>)]?:
+  ((this: TStore & NoId<TGenericStore>, ...args: ExtractStore<TStore>['actions'][K] extends (...args: any[]) => any ? Parameters<ExtractStore<TStore>['actions'][K]> : never)
+  => ExtractStore<TStore>['actions'][K] extends (...args: any[]) => any ? ReturnType<ExtractStore<TStore>['actions'][K]> : never) | undefined
+}
 // #endregion PiniaActionThis
 
 // #region StoreThis
@@ -36,11 +33,14 @@ export type PiniaActionThis<TStore extends Store, TGenericStore extends Store = 
  * @internal
  */
 export interface StoreThis<TStore extends Store, TGenericStore extends Store = Store> {
-  state?: Omit<ExtractStore<TStore>['state'], keyof ExtractStore<TGenericStore>['state']> & Partial<ExtractStore<TGenericStore>['state']>
+  state?: {
+    [K in keyof (Omit<ExtractStore<TStore>['state'], keyof ExtractStore<TGenericStore>['state']> & Partial<ExtractStore<TGenericStore>['state']>)]?:
+    (Omit<ExtractStore<TStore>['state'], keyof ExtractStore<TGenericStore>['state']> & Partial<ExtractStore<TGenericStore>['state']>)[K] | undefined;
+  }
   getters?: PiniaGetterThis<TStore, TGenericStore>
   actions?: PiniaActionThis<TStore, TGenericStore>
-  options?: Omit<DefineStoreOptions<TStore['$id'], TStore['$state'], ExtractStore<TStore>['getters'], ExtractStore<TStore>['actions']>, 'id'>
-  // options?: DefineStoreOptionsBase<ExtractStore<TStore>['state'], TStore>
+  // options?: Omit<DefineStoreOptions<TStore['$id'], TStore['$state'], ExtractStore<TStore>['getters'], ExtractStore<TStore>['actions']>, 'id'>
+  options?: DefineStoreOptionsBase<ExtractStore<TStore>['state'], TStore>
 }
 // #endregion StoreThis
 
@@ -55,8 +55,16 @@ export interface StoreThis<TStore extends Store, TGenericStore extends Store = S
  * ```
  * @internal
  */
-export type ExtractStore<TStore extends Store> = TStore extends Store<string, infer S, infer G, infer A>
-  ? { state: S; getters: G; actions: A }
+export type ExtractStore<TStore extends Store> = TStore extends Store<
+  string,
+  infer S extends StateTree,
+  infer G,
+  infer A>
+  ? {
+      state: S
+      getters: G
+      actions: A
+    }
   : never
 // #endregion ExtractStore
 
@@ -83,3 +91,5 @@ export type PiniaStore<
   Actions & ExtractStore<TGenericStore>['actions']
 >
 // #endregion PiniaStore
+
+export type NoId<TStore extends Partial<Store>> = Omit<TStore, '$id'>

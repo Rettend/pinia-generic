@@ -152,3 +152,107 @@ export const useTestStore = useStore<TestStore>('test', {
     persist: true,
   },
 })
+
+type BaseStore1<T> = PiniaStore<
+  'base1',
+  {
+    current: T | null
+    all: T[]
+  },
+  {
+    getLength(): number
+  },
+  {
+    add(item: T): void
+  }
+>
+
+type BaseStore2<T> = PiniaStore<
+  'base2',
+  {
+    other: T | null
+  },
+  {
+    getOther(): T | null
+    getName(): string | undefined
+  },
+  {
+    remove(id: number): void
+  },
+  BaseStore1<T>
+>
+
+function baseStore1<T extends Category>() {
+  return defineGenericStore<BaseStore1<T>>({
+    state: {
+      current: null,
+      all: [],
+    },
+    getters: {
+      getLength() {
+        return this.all.length
+      },
+    },
+    actions: {
+      add(item: T) {
+        this.all.push(item)
+      },
+    },
+  })
+}
+
+function baseStore2<T extends Category>() {
+  return defineGenericStore<BaseStore2<T>, BaseStore1<T>>({
+    state: {
+      other: null,
+    },
+    getters: {
+      getOther() {
+        return this.other
+      },
+      getName() {
+        return this.current?.name
+      },
+    },
+    actions: {
+      remove(id: number) {
+        this.all = this.all.filter(item => item.id !== id)
+      },
+    },
+  }, baseStore1<T>())
+}
+
+type CategoryStore2 = PiniaStore<
+  'category2',
+  {
+    description: string
+  },
+  {
+    getMaxId(): number
+  },
+  {
+    clear(): void
+  },
+  BaseStore2<Category>
+>
+
+export const useCategoryStore2 = useStore<CategoryStore2, BaseStore2<Category>>(
+  'category2',
+  {
+    state: {
+      description: 'This is a category store',
+    },
+    getters: {
+      getMaxId() {
+        return this.all.reduce((max, item) => Math.max(max, item.id), 0)
+      },
+      getName: undefined,
+    },
+    actions: {
+      clear() {
+        this.all = []
+      },
+    },
+  },
+  baseStore2<Category>(),
+)

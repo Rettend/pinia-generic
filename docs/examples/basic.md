@@ -1,10 +1,6 @@
 # Basic Example
 
-Here I show a basic generic store and a store that extends it.
-
-::: tip NOTE
-I skipped the imports for brevity.
-:::
+A basic generic store and a store that extends it.
 
 ## Generic Store
 

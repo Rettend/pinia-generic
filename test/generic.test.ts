@@ -22,49 +22,64 @@ type CategoryStore = PiniaStore<
 >
 
 const state = createState<CategoryStore, BaseStore<Category>>({
+  current: { id: 1, name: 'test current' },
+  all: [
+    { id: 0, name: 'Laptop' },
+  ],
   some: 'some text',
+  undefinedState: undefined,
 })
 
 const getters = createGetters<CategoryStore, BaseStore<Category>>({
   getLength() {
     return this.all.length
   },
+  undefinedGetter: undefined,
 })
 
 const actions = createActions<CategoryStore, BaseStore<Category>>({
   remove(id: number) {
     this.all = this.all.filter(item => item.id !== id)
   },
+  undefinedAction: undefined,
 })
 
 type BaseStore<T> = Store<
   'base',
   {
-    current: Category | null
+    current: T | undefined
     all: T[]
+    undefinedState: string
   },
   {
     getName(): string | undefined
+    undefinedGetter(): T | undefined
   },
   {
     add(item: T): void
+    undefinedAction(): T | undefined
   }
 >
 
 function baseStore<T extends Category>() {
   return defineGenericStore<BaseStore<T>>({
     state: {
-      current: { id: 1, name: 'test current' },
-      all: [],
+      undefinedState: 'I am undefined',
     },
     getters: {
       getName() {
         return this.current?.name
       },
+      undefinedGetter() {
+        return this.current
+      },
     },
     actions: {
       add(item: T) {
         this.all.push(item)
+      },
+      undefinedAction() {
+        return this.current
       },
     },
   })
@@ -82,11 +97,18 @@ export const useCategoryStore = useStore<CategoryStore, BaseStore<Category>>(
 
 describe('Full generic example', () => {
   test('createState should return an object with the given properties', () => {
-    expect(state).toMatchObject({ some: 'some text' })
+    const pinia = createPinia()
+    const store = useCategoryStore(pinia)
+
+    expect(store.some).toBe('some text')
   })
 
   test('createGetters should return an object with the given functions', () => {
-    expect(getters).toHaveProperty('getLength')
+    const pinia = createPinia()
+    const store = useCategoryStore(pinia)
+
+    store.add({ id: 1, name: 'Mobile' })
+    expect(store.getLength).toBe(2)
   })
 
   test('createActions should return an object with the given functions', () => {
@@ -101,16 +123,29 @@ describe('Full generic example', () => {
     expect(store).toHaveProperty('actions')
   })
 
-  test('useStore should return a store definition with the given id and properties', () => {
+  test('undefined properties should be ignored', () => {
     const pinia = createPinia()
     const store = useCategoryStore(pinia)
 
+    expect(store.undefinedState).toBeUndefined()
+    expect(store.undefinedGetter).toBeUndefined()
+    expect(store.undefinedAction).toBeUndefined()
+  })
+
+  test('useStore should return a store definition with the given id and properties', () => {
+    const pinia = createPinia()
+    const store = useCategoryStore(pinia)
+    store.all = []
+
     expect(store).toHaveProperty('$id', 'category')
 
-    store.add({ id: 1, name: 'test all' })
+    store.add({ id: 1, name: 'Computer' })
+
     expect(store.getLength).toBe(1)
     expect(store.getName).toBe('test current')
+
     store.remove(1)
+
     expect(store).toMatchObject({ all: [] })
   })
 })
