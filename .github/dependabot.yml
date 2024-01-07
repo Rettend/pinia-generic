@@ -7,6 +7,9 @@ version: 2
 updates:
   - package-ecosystem: npm # See documentation for possible values
     directory: / # Location of package manifests
+    ignore:
+      - dependency-name: '@antfu/eslint-config'
+      - dependency-name: 'eslint'
     commit-message:
       prefix: '📦 '
     schedule:
