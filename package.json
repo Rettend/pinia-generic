@@ -17,6 +17,9 @@
     "vue",
     "pinia plugin"
   ],
+  "publishConfig": {
+    "registry": "https://www.npmjs.com/package/pinia-generic"
+  },
   "sideEffects": false,
   "exports": {
     ".": {
