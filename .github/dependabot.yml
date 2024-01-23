@@ -3,18 +3,18 @@
 # Please see the documentation for all configuration options:
 # https://docs.github.com/github/administering-a-repository/configuration-options-for-dependency-updates
 
-version: 2
-updates:
-  - package-ecosystem: npm # See documentation for possible values
-    directory: / # Location of package manifests
-    ignore:
-      - dependency-name: '@antfu/eslint-config'
-      - dependency-name: eslint
-    commit-message:
-      prefix: '📦 '
-    schedule:
-      interval: weekly
-    groups:
-      dev-dependencies:
-        patterns:
-          - '*' # Combine all PRs
+# version: 2
+# updates:
+#   - package-ecosystem: npm # See documentation for possible values
+#     directory: / # Location of package manifests
+#     ignore:
+#       - dependency-name: '@antfu/eslint-config'
+#       - dependency-name: eslint
+#     commit-message:
+#       prefix: '📦 '
+#     schedule:
+#       interval: weekly
+#     groups:
+#       dev-dependencies:
+#         patterns:
+#           - '*' # Combine all PRs
