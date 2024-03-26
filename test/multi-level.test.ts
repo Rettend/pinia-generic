@@ -1,5 +1,5 @@
 import { createPinia } from 'pinia'
-import { describe, expect, test } from 'vitest'
+import { describe, expect, it } from 'vitest'
 import { type PiniaStore, defineGenericStore, useStore } from '../src'
 
 interface BaseItem {
@@ -20,8 +20,8 @@ type BaseStore2<T extends BaseItem> = PiniaStore<
     value2: T | null
     undefinedValue2: string
   },
-  {},
-  {},
+  object,
+  object,
   BaseStore1<T>
 >
 
@@ -31,23 +31,23 @@ type BaseStore3<T extends BaseItem> = PiniaStore<
     value3: T | null
     undefinedValue3: string
   },
-  {},
-  {},
+  object,
+  object,
   BaseStore2<T>
 >
 
 type MyStore = PiniaStore<
   'mystore',
-  {},
+  object,
   {
-    getValue1(): BaseItem | null
-    getValue2(): BaseItem | null
-    getValue3(): BaseItem | null
+    getValue1: () => BaseItem | null
+    getValue2: () => BaseItem | null
+    getValue3: () => BaseItem | null
   },
   {
-    setValue1(value: BaseItem): void
-    setValue2(value: BaseItem): void
-    setValue3(value: BaseItem): void
+    setValue1: (value: BaseItem) => void
+    setValue2: (value: BaseItem) => void
+    setValue3: (value: BaseItem) => void
   },
   BaseStore3<BaseItem>
 >
@@ -68,9 +68,7 @@ function baseStore2<T extends BaseItem>() {
       undefinedValue1: undefined,
       undefinedValue2: 'I am undefined',
     },
-  },
-  baseStore1<T>(),
-  )
+  }, baseStore1<T>())
 }
 
 function baseStore3<T extends BaseItem>() {
@@ -81,9 +79,7 @@ function baseStore3<T extends BaseItem>() {
       undefinedValue2: undefined,
       undefinedValue3: 'I am undefined',
     },
-  },
-  baseStore2<T>(),
-  )
+  }, baseStore2<T>())
 }
 
 const useMyStore = useStore<MyStore, BaseStore3<BaseItem>>(
@@ -121,8 +117,8 @@ const useMyStore = useStore<MyStore, BaseStore3<BaseItem>>(
   baseStore3<BaseItem>(),
 )
 
-describe('Multi-level generic example', () => {
-  test('useStore should return a store definition with the given id and properties', () => {
+describe('multi-level generic example', () => {
+  it('useStore should return a store definition with the given id and properties', () => {
     const pinia = createPinia()
     const store = useMyStore(pinia)
 
@@ -135,7 +131,7 @@ describe('Multi-level generic example', () => {
     expect(store.getValue1).toMatchObject({ id: 1 })
   })
 
-  test('state should be initialized with the given values', () => {
+  it('state should be initialized with the given values', () => {
     const pinia = createPinia()
     const store = useMyStore(pinia)
 
@@ -144,7 +140,7 @@ describe('Multi-level generic example', () => {
     expect(store.value3).toMatchObject({ id: 3 })
   })
 
-  test('getters should return the same value as the state', () => {
+  it('getters should return the same value as the state', () => {
     const pinia = createPinia()
     const store = useMyStore(pinia)
 
@@ -153,7 +149,7 @@ describe('Multi-level generic example', () => {
     expect(store.getValue3).toBe(store.value3)
   })
 
-  test('undefined properties should be ignored', () => {
+  it('undefined properties should be ignored', () => {
     const pinia = createPinia()
     const store = useMyStore(pinia)
 
@@ -162,7 +158,7 @@ describe('Multi-level generic example', () => {
     expect(store.undefinedValue3).toBeUndefined()
   })
 
-  test('actions should set the state to the given value', () => {
+  it('actions should set the state to the given value', () => {
     const pinia = createPinia()
     const store = useMyStore(pinia)
 

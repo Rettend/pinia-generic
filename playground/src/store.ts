@@ -11,10 +11,10 @@ type CategoryStore = PiniaStore<
     description: string
   },
   {
-    getMaxId(): number
+    getMaxId: () => number
   },
   {
-    remove(id: number): void
+    remove: (id: number) => void
   },
   BaseStore<Category>
 >
@@ -46,11 +46,11 @@ type BaseStore<T> = PiniaStore<
     all: T[]
   },
   {
-    getLength(): number
-    getName(): string | undefined
+    getLength: () => number
+    getName: () => string | undefined
   },
   {
-    add(item: T): void
+    add: (item: T) => void
   }
 >
 
@@ -103,10 +103,10 @@ type BookStore = PiniaStore<
     active: Book | null
   },
   {
-    getTotal(): number
-    getAveragePrice(): number
+    getTotal: () => number
+    getAveragePrice: () => number
   },
-  {},
+  object,
   BaseStore<Book>
 >
 
@@ -160,10 +160,10 @@ type BaseStore1<T> = PiniaStore<
     all: T[]
   },
   {
-    getLength(): number
+    getLength: () => number
   },
   {
-    add(item: T): void
+    add: (item: T) => void
   }
 >
 
@@ -173,11 +173,11 @@ type BaseStore2<T> = PiniaStore<
     other: T | null
   },
   {
-    getOther(): T | null
-    getName(): string | undefined
+    getOther: () => T | null
+    getName: () => string | undefined
   },
   {
-    remove(id: number): void
+    remove: (id: number) => void
   },
   BaseStore1<T>
 >
@@ -228,10 +228,10 @@ type CategoryStore2 = PiniaStore<
     description: string
   },
   {
-    getMaxId(): number
+    getMaxId: () => number
   },
   {
-    clear(): void
+    clear: () => void
   },
   BaseStore2<Category>
 >

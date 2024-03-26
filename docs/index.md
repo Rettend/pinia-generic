@@ -27,4 +27,3 @@ features:
   - title: 📦 Extend stores
     details: Use store inheritance to create a hierarchy of generic stores
 ---
-

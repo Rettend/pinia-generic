@@ -9,18 +9,14 @@ A basic generic store and a store that extends it.
 ::: code-group
 
 ```ts [inline]
-type ProductStore<T> = PiniaStore<'product',
-  {
-    all: T[]
-  },
-  {
-    getTotal(): number
-    getMaxPrice(): number
-  },
-  {
-    add(item: T): void
-  }
->
+type ProductStore<T> = PiniaStore<'product', {
+  all: T[]
+}, {
+  getTotal: () => number
+  getMaxPrice: () => number
+}, {
+  add: (item: T) => void
+}>
 ```
 
 ```ts [split]
@@ -29,19 +25,15 @@ interface ProductState<T> {
 }
 
 interface ProductGetters {
-  getTotal(): number
-  getMaxPrice(): number
+  getTotal: () => number
+  getMaxPrice: () => number
 }
 
 interface ProductActions<T> {
-  add(item: T): void
+  add: (item: T) => void
 }
 
-type ProductStore<T> = PiniaStore<'product',
-  ProductState<T>,
-  ProductGetters,
-  ProductActions<T>
->
+type ProductStore<T> = PiniaStore<'product', ProductState<T>, ProductGetters, ProductActions<T>>
 ```
 
 :::
@@ -127,16 +119,11 @@ Store type
 ::: code-group
 
 ```ts [inline]
-type BookStore = PiniaStore<'book',
-  {
-    active: Book | null
-  },
-  {
-    getAveragePrice(): number
-  },
-  {},
-  ProductStore<Book>
->
+type BookStore = PiniaStore<'book', {
+  active: Book | null
+}, {
+  getAveragePrice: () => number
+}, object, ProductStore<Book>>
 ```
 
 ```ts [split]
@@ -145,15 +132,10 @@ interface BookState {
 }
 
 interface BookGetters {
-  getAveragePrice(): number
+  getAveragePrice: () => number
 }
 
-type BookStore = PiniaStore<'book',
-  BookState,
-  BookGetters,
-  {},
-  ProductStore<Book>
->
+type BookStore = PiniaStore<'book', BookState, BookGetters, object, ProductStore<Book>>
 ```
 
 :::
@@ -177,9 +159,7 @@ export const useBookStore = useStore<BookStore, ProductStore<Book>>('book', {
       return this.getTotal / this.all.length
     },
   },
-},
-productStore<Book>(),
-)
+}, productStore<Book>(),)
 ```
 
 ```ts [split]
@@ -201,9 +181,7 @@ const bookGetters = createGetters<BookStore, ProductStore<Book>>({
 export const useBookStore = useStore<BookStore, ProductStore<Book>>('book', {
   state: bookState,
   getters: bookGetters,
-},
-productStore<Book>(),
-)
+}, productStore<Book>(),)
 ```
 
 :::

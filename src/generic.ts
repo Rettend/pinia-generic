@@ -10,7 +10,8 @@ import { filterUndefined } from './utils'
  * @param state - The state object.
  */
 export function createState<
-  TStore extends Store, TGenericStore extends Store = Store,
+  TStore extends Store,
+TGenericStore extends Store = Store,
 >(
   state: {
     [K in keyof (Omit<ExtractStore<TStore>['state'], keyof ExtractStore<TGenericStore>['state']> & Partial<ExtractStore<TGenericStore>['state']>)]:
@@ -29,7 +30,8 @@ export function createState<
  * @param getters - The getters object.
  */
 export function createGetters<
-  TStore extends Store, TGenericStore extends Store = Store,
+  TStore extends Store,
+TGenericStore extends Store = Store,
 >(
   getters: PiniaGetterThis<TStore, TGenericStore>,
 ): ExtractStore<TStore>['getters'] {
@@ -45,7 +47,8 @@ export function createGetters<
  * @param actions - The actions object.
  */
 export function createActions<
-  TStore extends Store, TGenericStore extends Store = Store,
+  TStore extends Store,
+TGenericStore extends Store = Store,
 >(
   actions: PiniaActionThis<TStore, TGenericStore>,
 ): ExtractStore<TStore>['actions'] {
@@ -61,7 +64,8 @@ export function createActions<
  * @param baseStore - Another base store to extend.
  */
 export function defineGenericStore<
-  TStore extends Store, TGenericStore extends Store = Store,
+  TStore extends Store,
+TGenericStore extends Store = Store,
 >(
   store: StoreThis<TStore, TGenericStore>,
   baseStore: StoreThis<TGenericStore> = {},
@@ -102,7 +106,8 @@ export function defineGenericStore<
  * @param genericStore - The generic store object.
  */
 export function useStore<
-  TStore extends Store, TGenericStore extends Store = Store,
+  TStore extends Store,
+TGenericStore extends Store = Store,
 >(
   id: TStore['$id'],
   store: StoreThis<TStore, TGenericStore>,
@@ -128,8 +133,7 @@ export function useStore<
     },
     ...genericStore.options,
     ...store.options,
-  },
-  ) as StoreDefinition<
+  }) as StoreDefinition<
     TStore['$id'],
     ExtractStore<TStore>['state'],
     ExtractStore<TStore>['getters'],

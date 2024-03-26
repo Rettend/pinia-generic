@@ -40,10 +40,10 @@ type BaseStore<T> = PiniaStore<
     all: T[]
   },
   {
-    getName(): string | undefined
+    getName: () => string | undefined
   },
   {
-    add(item: T): void
+    add: (item: T) => void
   }
 >
 
@@ -87,9 +87,9 @@ type CategoryStore = PiniaStore<
     description: string
   },
   {
-    getMaxId(): number
+    getMaxId: () => number
   },
-  {},
+  object,
   BaseStore<Category>
 >
 
@@ -116,12 +116,12 @@ interface Product extends BaseType {
 
 type ProductStore = PiniaStore<
   'product',
-  {},
+  object,
   {
-    getTotal(): number
+    getTotal: () => number
   },
   {
-    remove(id: number): void
+    remove: (id: number) => void
   },
   BaseStore<Product>
 >
@@ -181,8 +181,8 @@ type CategoryStore = PiniaStore<
     name: string
   },
   {
-    getId(): number
-    getName(): string
+    getId: () => number
+    getName: () => string
   }
 >
 ```

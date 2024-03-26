@@ -1,10 +1,10 @@
 {
   "extends": "../tsconfig.json",
   "compilerOptions": {
-    "types": ["vite/client"],
     "paths": {
       "pinia-generic": ["../src"]
     },
+    "types": ["vite/client"],
     "forceConsistentCasingInFileNames": true
   },
   "include": ["./**/*", "../uno.config.ts"]
