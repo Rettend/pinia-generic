@@ -1,5 +1,5 @@
 import { type Store, createPinia } from 'pinia'
-import { describe, expect, test } from 'vitest'
+import { describe, expect, it } from 'vitest'
 import { type PiniaStore, createActions, createGetters, createState, defineGenericStore, useStore } from '../src'
 
 interface Category {
@@ -13,10 +13,10 @@ type CategoryStore = PiniaStore<
     some: string
   },
   {
-    getLength(): number
+    getLength: () => number
   },
   {
-    remove(id: number): void
+    remove: (id: number) => void
   },
   BaseStore<Category>
 >
@@ -52,12 +52,12 @@ type BaseStore<T> = Store<
     undefinedState: string
   },
   {
-    getName(): string | undefined
-    undefinedGetter(): T | undefined
+    getName: () => string | undefined
+    undefinedGetter: () => T | undefined
   },
   {
-    add(item: T): void
-    undefinedAction(): T | undefined
+    add: (item: T) => void
+    undefinedAction: () => T | undefined
   }
 >
 
@@ -95,15 +95,15 @@ export const useCategoryStore = useStore<CategoryStore, BaseStore<Category>>(
   baseStore<Category>(),
 )
 
-describe('Full generic example', () => {
-  test('createState should return an object with the given properties', () => {
+describe('full generic example', () => {
+  it('createState should return an object with the given properties', () => {
     const pinia = createPinia()
     const store = useCategoryStore(pinia)
 
     expect(store.some).toBe('some text')
   })
 
-  test('createGetters should return an object with the given functions', () => {
+  it('createGetters should return an object with the given functions', () => {
     const pinia = createPinia()
     const store = useCategoryStore(pinia)
 
@@ -111,11 +111,11 @@ describe('Full generic example', () => {
     expect(store.getLength).toBe(2)
   })
 
-  test('createActions should return an object with the given functions', () => {
+  it('createActions should return an object with the given functions', () => {
     expect(actions).toHaveProperty('remove')
   })
 
-  test('defineGenericStore should return an object with state, getters and actions properties', () => {
+  it('defineGenericStore should return an object with state, getters and actions properties', () => {
     const store = baseStore<Category>()
 
     expect(store).toHaveProperty('state')
@@ -123,7 +123,7 @@ describe('Full generic example', () => {
     expect(store).toHaveProperty('actions')
   })
 
-  test('undefined properties should be ignored', () => {
+  it('undefined properties should be ignored', () => {
     const pinia = createPinia()
     const store = useCategoryStore(pinia)
 
@@ -132,7 +132,7 @@ describe('Full generic example', () => {
     expect(store.undefinedAction).toBeUndefined()
   })
 
-  test('useStore should return a store definition with the given id and properties', () => {
+  it('useStore should return a store definition with the given id and properties', () => {
     const pinia = createPinia()
     const store = useCategoryStore(pinia)
     store.all = []

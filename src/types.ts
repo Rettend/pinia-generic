@@ -1,4 +1,3 @@
-/* eslint-disable antfu/generic-spacing */
 import type { DefineStoreOptionsBase, StateTree, Store } from 'pinia'
 
 // #region PiniaGetterThis
@@ -59,7 +58,8 @@ export type ExtractStore<TStore extends Store> = TStore extends Store<
   string,
   infer S extends StateTree,
   infer G,
-  infer A>
+  infer A
+>
   ? {
       state: S
       getters: G
@@ -80,9 +80,9 @@ export type ExtractStore<TStore extends Store> = TStore extends Store<
  */
 export type PiniaStore<
   Id extends string = string,
-  State extends StateTree = {},
-  Getters = {},
-  Actions = {},
+  State extends StateTree = object,
+  Getters = object,
+  Actions = object,
   TGenericStore extends Store = Store,
 > = Store<
   Id,

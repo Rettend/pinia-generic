@@ -26,8 +26,8 @@ type CategoryStore = PiniaStore<
     name: string
   },
   {
-    getId(): number
-    getName(): string
+    getId: () => number
+    getName: () => string
   }
 >
 ```
@@ -68,7 +68,7 @@ Here we only have a state and getters, showing how the generic parameters are op
 type CategoryStore = Store<
   'category',
   CategoryState,
-  {},
+  object,
   CategoryActions,
 >
 ```

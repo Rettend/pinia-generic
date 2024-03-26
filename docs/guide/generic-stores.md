@@ -20,11 +20,11 @@ type BaseStore<T> = PiniaStore<
     all: T[]
   },
   {
-    getLength(): number
-    getName(): string | undefined
+    getLength: () => number
+    getName: () => string | undefined
   },
   {
-    add(item: T): void
+    add: (item: T) => void
   }
 >
 ```
@@ -78,7 +78,7 @@ interface Category {
 We define a store type that uses the generic store, and pass `Category` as the generic parameter.
 
 ```ts
-type CategoryStore = PiniaStore<'category', {}, {}, {}, BaseStore<Category>>
+type CategoryStore = PiniaStore<'category', object, object, object, BaseStore<Category>>
 ```
 
 ### `useStore()` function
@@ -190,10 +190,10 @@ interface Todo {
 
 type TodoStore = PiniaStore<
   'todo',
-  {},
-  {},
+  object,
+  object,
   {
-    remove(id: number): void
+    remove: (id: number) => void
   },
   BaseStore<Todo>
 >
@@ -245,7 +245,7 @@ function baseStore<T extends BaseStoreType>() { // [!code ++]
   })
 }
 ```
-  
+
 Don't forget to add `isDone(): boolean | undefined` to the generic store type's getters.
 
 And you probably want to extend your types with the `BaseStoreType` too.

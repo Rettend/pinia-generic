@@ -122,13 +122,12 @@ Now a store only needs to extend `BaseStore2` to get all the state and getters f
 ```ts
 type MyStore = PiniaStore<
   'mystore',
-  {},
+  object,
   {
-    getValue1(): BaseItem | null
-    getValue2(): BaseItem | null
+    getValue1: () => BaseItem | null
+    getValue2: () => BaseItem | null
   },
-  {
-  },
+  object,
   BaseStore2<BaseItem>
 >
 
