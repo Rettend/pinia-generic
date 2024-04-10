@@ -2,8 +2,8 @@
 
 ## v1.0.0
 
-- [ ] only provide ES module build and migrate to antfu/eslint-config 2.0
-- [ ] refactor docs: start with the problem, then the solution. go more in depth how pinia-generic works
+- [ ] move to ESM only
+- [ ] refactor docs: start with the problem, then the solution. go more in-depth in how pinia-generic works
 - [ ] reduce ceremony (rewrite):
   - [ ] combine the `create` functions
   - [ ] combine `defineGenericStore` and `useStore`
