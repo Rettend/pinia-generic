@@ -1,4 +1,5 @@
 import { type Store, type StoreDefinition, defineStore } from 'pinia'
+// import type { ExtractStore, PiniaActionThis, PiniaGetterThis, StoreThis } from 'pinia-generic'
 import type { ExtractStore, PiniaActionThis, PiniaGetterThis, StoreThis } from './types'
 import { filterUndefined } from './utils'
 
