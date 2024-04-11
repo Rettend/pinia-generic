@@ -1,7 +1,7 @@
 {
   "name": "pinia-generic",
   "type": "module",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "packageManager": "pnpm@8.15.6",
   "description": "pinia-generic provides conventions to create generic stores, and it also supports splitting stores into multiple files",
   "author": "Rettend",
