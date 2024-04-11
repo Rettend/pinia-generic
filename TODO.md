@@ -8,8 +8,3 @@
   - [ ] combine the `create` functions
   - [ ] combine `defineGenericStore` and `useStore`
   - [ ] use parameter type inference?
-
-## v0.2.0
-
-- [x] docs: add multi-level inheritance guide
-- [x] tests: test filtering properties with undefined
