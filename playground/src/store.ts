@@ -1,4 +1,5 @@
-import { type PiniaStore, createActions, createGetters, createState, defineGenericStore, useStore } from 'pinia-generic'
+import type { PiniaStore } from 'pinia-generic'
+import { createActions, createGetters, createState, defineGenericStore, useStore } from 'pinia-generic'
 
 interface Category {
   id: number

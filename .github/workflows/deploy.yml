@@ -16,27 +16,18 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: Install pnpm
-        uses: pnpm/action-setup@v2
-
-      - name: Set node
-        uses: actions/setup-node@v3
-        with:
-          node-version: 18.x
-          cache: pnpm
-
-      - name: Setup
-        run: npm i -g @antfu/ni
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
 
       - name: Install
-        run: nci
+        run: bun install
 
       - name: Build
-        run: nr docs:build
+        run: bun run docs:build
 
       - uses: actions/configure-pages@v2
       - uses: actions/upload-pages-artifact@v1

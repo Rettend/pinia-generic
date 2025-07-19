@@ -1,5 +1,5 @@
-import { h } from 'vue'
 import Theme from 'vitepress/theme'
+import { h } from 'vue'
 import './style.css'
 
 export default {

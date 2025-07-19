@@ -1,5 +1,6 @@
-import { type Store, type StoreDefinition, defineStore } from 'pinia'
+import type { Store, StoreDefinition } from 'pinia'
 import type { ExtractStore, PiniaActionThis, PiniaGetterThis, StoreThis } from './types'
+import { defineStore } from 'pinia'
 import { filterUndefined } from './utils'
 
 // #region createState
@@ -11,7 +12,7 @@ import { filterUndefined } from './utils'
  */
 export function createState<
   TStore extends Store,
-TGenericStore extends Store = Store,
+  TGenericStore extends Store = Store,
 >(
   state: {
     [K in keyof (Omit<ExtractStore<TStore>['state'], keyof ExtractStore<TGenericStore>['state']> & Partial<ExtractStore<TGenericStore>['state']>)]:
@@ -31,7 +32,7 @@ TGenericStore extends Store = Store,
  */
 export function createGetters<
   TStore extends Store,
-TGenericStore extends Store = Store,
+  TGenericStore extends Store = Store,
 >(
   getters: PiniaGetterThis<TStore, TGenericStore>,
 ): ExtractStore<TStore>['getters'] {
@@ -48,7 +49,7 @@ TGenericStore extends Store = Store,
  */
 export function createActions<
   TStore extends Store,
-TGenericStore extends Store = Store,
+  TGenericStore extends Store = Store,
 >(
   actions: PiniaActionThis<TStore, TGenericStore>,
 ): ExtractStore<TStore>['actions'] {
@@ -65,7 +66,7 @@ TGenericStore extends Store = Store,
  */
 export function defineGenericStore<
   TStore extends Store,
-TGenericStore extends Store = Store,
+  TGenericStore extends Store = Store,
 >(
   store: StoreThis<TStore, TGenericStore>,
   baseStore: StoreThis<TGenericStore> = {},
@@ -107,7 +108,7 @@ TGenericStore extends Store = Store,
  */
 export function useStore<
   TStore extends Store,
-TGenericStore extends Store = Store,
+  TGenericStore extends Store = Store,
 >(
   id: TStore['$id'],
   store: StoreThis<TStore, TGenericStore>,

@@ -13,72 +13,45 @@ jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
-      - name: Install pnpm
-        uses: pnpm/action-setup@v2
-
-      - name: Set node
-        uses: actions/setup-node@v3
-        with:
-          node-version: 18.x
-          cache: pnpm
-
-      - name: Setup
-        run: npm i -g @antfu/ni
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
 
       - name: Install
-        run: nci
+        run: bun install
 
       - name: Lint
-        run: nr lint
+        run: bun run lint
 
   typecheck:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
-      - name: Install pnpm
-        uses: pnpm/action-setup@v2
-
-      - name: Set node
-        uses: actions/setup-node@v3
-        with:
-          node-version: 18.x
-          cache: pnpm
-
-      - name: Setup
-        run: npm i -g @antfu/ni
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
 
       - name: Install
-        run: nci
+        run: bun install
 
       - name: Typecheck
-        run: nr typecheck
+        run: bun run check
 
   test:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
-      - name: Install pnpm
-        uses: pnpm/action-setup@v2
-
-      - name: Set node
-        uses: actions/setup-node@v3
-        with:
-          node-version: 18.x
-          cache: pnpm
-
-      - name: Setup
-        run: npm i -g @antfu/ni
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
 
       - name: Install
-        run: nci
+        run: bun install
 
       - name: Build
-        run: nr build
+        run: bun run build
 
       - name: Test
-        run: nr test
+        run: bun run test

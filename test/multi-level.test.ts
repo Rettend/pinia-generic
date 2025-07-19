@@ -1,6 +1,7 @@
+import type { PiniaStore } from '../src'
 import { createPinia } from 'pinia'
 import { describe, expect, it } from 'vitest'
-import { type PiniaStore, defineGenericStore, useStore } from '../src'
+import { defineGenericStore, useStore } from '../src'
 
 interface BaseItem {
   id: number

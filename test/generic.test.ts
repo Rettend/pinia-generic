@@ -1,6 +1,8 @@
-import { type Store, createPinia } from 'pinia'
+import type { Store } from 'pinia'
+import type { PiniaStore } from '../src'
+import { createPinia } from 'pinia'
 import { describe, expect, it } from 'vitest'
-import { type PiniaStore, createActions, createGetters, createState, defineGenericStore, useStore } from '../src'
+import { createActions, createGetters, createState, defineGenericStore, useStore } from '../src'
 
 interface Category {
   id: number

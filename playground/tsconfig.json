@@ -1,11 +1,19 @@
 {
   "extends": "../tsconfig.json",
   "compilerOptions": {
+    "target": "ESNext",
+    "lib": ["ESNext"],
+    "module": "ESNext",
+    "moduleResolution": "bundler",
     "paths": {
       "pinia-generic": ["../src"]
     },
     "types": ["vite/client"],
-    "forceConsistentCasingInFileNames": true
+    "noImplicitOverride": true,
+    "noUncheckedIndexedAccess": true,
+    "forceConsistentCasingInFileNames": true,
+    "isolatedModules": true,
+    "skipLibCheck": true
   },
   "include": ["./**/*", "../uno.config.ts"]
 }

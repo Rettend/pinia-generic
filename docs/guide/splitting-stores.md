@@ -111,8 +111,8 @@ Finally, we export and import them, and create the store.
 
 ```ts
 import { defineStore } from 'pinia'
-import { state } from './state'
 import { getters } from './getters'
+import { state } from './state'
 
 export const useCategoryStore = defineStore('category', {
   state: () => state,

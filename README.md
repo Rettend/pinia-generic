@@ -31,7 +31,8 @@ When your project has multiple stores that share a lot of common logic, you can 
 Use `defineGenericStore()` to create a generic store.
 
 ```ts
-import { type PiniaStore, defineGenericStore, useStore } from 'pinia-generic'
+import type { PiniaStore } from 'pinia-generic'
+import { defineGenericStore, useStore } from 'pinia-generic'
 
 type BaseStore<T> = PiniaStore<
   'base',
@@ -190,9 +191,9 @@ type CategoryStore = PiniaStore<
 We have the state, getters and actions in separate files.
 
 ```ts
+import type { CategoryStore } from './types'
 // state.ts
 import { createState } from 'pinia-generic'
-import type { CategoryStore } from './types'
 
 const state = createState<CategoryStore>({
   id: 0,
@@ -201,9 +202,9 @@ const state = createState<CategoryStore>({
 ```
 
 ```ts
+import type { CategoryStore } from './types'
 // getters.ts
 import { createGetters } from 'pinia-generic'
-import type { CategoryStore } from './types'
 
 const getters = createGetters<CategoryStore>({
   getId() {
@@ -220,8 +221,8 @@ And finally we create the store.
 ```ts
 // store.ts
 import { defineStore } from 'pinia'
-import { state } from './state'
 import { getters } from './getters'
+import { state } from './state'
 
 export const useCategoryStore = defineStore('category', {
   state: () => state,
