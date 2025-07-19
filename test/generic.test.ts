@@ -1,7 +1,7 @@
 import type { Store } from 'pinia'
 import type { PiniaStore } from '../src'
 import { createPinia } from 'pinia'
-import { describe, expect, it } from 'vitest'
+import { describe, expect, expectTypeOf, it } from 'vitest'
 import { createActions, createGetters, createState, defineGenericStore, useStore } from '../src'
 
 interface Category {
@@ -98,6 +98,21 @@ export const useCategoryStore = useStore<CategoryStore, BaseStore<Category>>(
 )
 
 describe('full generic example', () => {
+  it('should have correct types', () => {
+    const pinia = createPinia()
+    const store = useCategoryStore(pinia)
+    // state
+    expectTypeOf(store.current).toEqualTypeOf<Category | undefined>()
+    expectTypeOf(store.all).toEqualTypeOf<Category[]>()
+    expectTypeOf(store.some).toBeString()
+    // getters
+    expectTypeOf(store.getName).toEqualTypeOf<string | undefined>()
+    expectTypeOf(store.getLength).toBeNumber()
+    // actions
+    expectTypeOf(store.add).toEqualTypeOf<(item: Category) => void>()
+    expectTypeOf(store.remove).toEqualTypeOf<(id: number) => void>()
+  })
+
   it('createState should return an object with the given properties', () => {
     const pinia = createPinia()
     const store = useCategoryStore(pinia)

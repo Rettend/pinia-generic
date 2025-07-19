@@ -1,6 +1,6 @@
 import type { PiniaStore } from '../src'
 import { createPinia } from 'pinia'
-import { describe, expect, it } from 'vitest'
+import { describe, expect, expectTypeOf, it } from 'vitest'
 import { defineGenericStore, useStore } from '../src'
 
 interface BaseItem {
@@ -119,6 +119,23 @@ const useMyStore = useStore<MyStore, BaseStore3<BaseItem>>(
 )
 
 describe('multi-level generic example', () => {
+  it('should have correct types', () => {
+    const pinia = createPinia()
+    const store = useMyStore(pinia)
+    // state
+    expectTypeOf(store.value1).toEqualTypeOf<BaseItem | null>()
+    expectTypeOf(store.value2).toEqualTypeOf<BaseItem | null>()
+    expectTypeOf(store.value3).toEqualTypeOf<BaseItem | null>()
+    // getters
+    expectTypeOf(store.getValue1).toEqualTypeOf<BaseItem | null>()
+    expectTypeOf(store.getValue2).toEqualTypeOf<BaseItem | null>()
+    expectTypeOf(store.getValue3).toEqualTypeOf<BaseItem | null>()
+    // actions
+    expectTypeOf(store.setValue1).toEqualTypeOf<(value: BaseItem) => void>()
+    expectTypeOf(store.setValue2).toEqualTypeOf<(value: BaseItem) => void>()
+    expectTypeOf(store.setValue3).toEqualTypeOf<(value: BaseItem) => void>()
+  })
+
   it('useStore should return a store definition with the given id and properties', () => {
     const pinia = createPinia()
     const store = useMyStore(pinia)
