@@ -44,7 +44,7 @@
     "test:ui": "vitest --ui --coverage --api 9527",
     "lint": "eslint . --fix",
     "check": "tsc --noEmit",
-    "release": "unbuild && vite build playground && bumpp && pnpm publish",
+    "release": "unbuild && vite build playground && bumpp && npm publish",
     "docs:dev": "vitepress dev docs",
     "docs:build": "vitepress build docs",
     "docs:preview": "vitepress preview docs"
